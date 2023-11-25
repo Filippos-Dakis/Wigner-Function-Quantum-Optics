@@ -1,5 +1,9 @@
 % Filippos Tzimkas-Dakis   Virginia Tech   November 2023
 %
+% Any feedback and suggestions are much appreciated! 
+%    
+%     ----->  dakisfilippos@vt.edu  <-------
+%
 % Version V 1.0
 % 
 % The present script defines a class whose objects behave as Fock/Number states.

@@ -1,9 +1,10 @@
-% Filippos Tzimkas-Dakis   Virginia Tech  November 2023
+% Filippos Tzimkas-Dakis   Virginia Tech   November 2023
 %
 % Any feedback and suggestions are much appreciated! 
 %    
 %     ----->  dakisfilippos@vt.edu  <-------
-%         
+%
+% Version V 1.0
 %
 % Example on CoherentBasis class
 % You should better execute its section one after the other while also reading the comments.
