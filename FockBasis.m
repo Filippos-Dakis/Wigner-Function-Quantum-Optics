@@ -1,10 +1,10 @@
-% Filippos Tzimkas-Dakis   Virginia Tech   November 2023
+% Filippos Tzimkas-Dakis   Virginia Tech   January 2024
 %
 % Any feedback and suggestions are much appreciated! 
 %    
 %     ----->  dakisfilippos@vt.edu  <-------
 %
-% Version V 1.0
+% Version V 1.1
 % 
 % The present script defines a class whose objects behave as Fock/Number states.
 % Every object of this class has all the basic features of a quantum Fock state .
