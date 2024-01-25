@@ -133,7 +133,7 @@ classdef FockBasis
             W     = zeros(N,N);                       % initializes the matrix
             for i = 1:N
                 for j = 1:N
-                    b      = x(i) + 1i*y(j);          % indipendent variable of Wigner function
+                    b      = x(j) + 1i*y(i);          % indipendent variable of Wigner function
                     W(i,j) =  (obj.D_(-b).Coeff)' * obj.Parity * (obj.D_(-b).Coeff);     % W(b) = Trace(\rho * D(-b) * Parity * D(-b))
                     % 
                     %   <ψ|D†(-b) = (obj.D_(-b).Coeff)' 
