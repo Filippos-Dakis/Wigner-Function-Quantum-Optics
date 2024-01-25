@@ -1,33 +1,42 @@
-% Filippos Tzimkas-Dakis   Virginia Tech   November 2023
+% Filippos Tzimkas-Dakis   Virginia Tech  January 2024
 %
 % Any feedback and suggestions are much appreciated! 
 %    
 %     ----->  dakisfilippos@vt.edu  <-------
-%
-% Version V 1.0
+% 
+% This script was developed on MATLAB 2023a
 %
 % Example on CoherentBasis class
 % You should better execute its section one after the other while also reading the comments.
 % In this way, you will understand the properties, the methods and the capabilities of the 
 % Coherent Basis class.
 %
-% Version V 1.0
+% This script produces four frigures.
+% Figure 1: population distribution in Fock basis for four different states written in the coherent basis
+% Figure 2: population distribution in Fock basis for an even and an odd cat state 
+% Figure 3: Wigner functions for (i) vacumm |0> , (ii) coherent |\alpha>,  (iii) superposition of two coherent states |\alpha> + |\beta> 
+% Figure 4: Wigner functions for (i) even cat state, (ii) odd cat state , (iii) compass cat state 
+%
+% The runtime of this script is ~5 seconds on a gaming laptop.
+%
+% Version V 1.1
 
-%% Define your quantum states |psi_1>, |psi_2> usinge coherent states
+%% Define your quantum states |psi_1>, |psi_2> using coherent states
 close all
 clear all
 clc
+tic
 % First we define a simple coherent state of argument \alpha = 1
 c1 = 2+2i;                      % coefficient in front of the \ket
 s1 = 1;                         % argument inside the \ket 
-psi_1 = CoherentBasis(c1,s1);   % |psi_1> = (2+2i)|1>
+psi_1 = CoherentBasis(c1,s1);   % |psi_1> = (2+2i)|1>,  here |1> = |α=1> is a coherent state, NOT a Fock state!
 psi_1 = psi_1.normalize;        % normalize our state
 psi_1.Coeff                     % display normalized coefficients
 
 % Now let's define a more general state
 c2 = [1;  2];                   % coefficient in front of the \ket
 s2 = [-1; 3i];                  % argument inside the \ket 
-psi_2 = CoherentBasis(c2,s2);   % |psi_2> = |-1> + 2|3i>
+psi_2 = CoherentBasis(c2,s2);   % |psi_2> = |-1> + 2|3i>, here |-1>, |3i> are coherent states
 psi_2 = psi_2.normalize;        % normalize the state
 psi_2.Coeff                     % display normalized coefficients
 
@@ -536,3 +545,4 @@ hold off
 end
 hold off
 
+toc
