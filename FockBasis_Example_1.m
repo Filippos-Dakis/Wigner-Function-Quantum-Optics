@@ -1,15 +1,30 @@
-% Filippos Tzimkas-Dakis   Virginia Tech  November 2023
+% Filippos Tzimkas-Dakis   Virginia Tech  January 2024
 %
 % Any feedback and suggestions are much appreciated! 
 %    
 %     ----->  dakisfilippos@vt.edu  <-------
-%         
+% 
+% This script was developed on MATLAB 2023a
+%
 % Example on FockBasis class
 % You should better execute its section one after the other while also reading the comments.
 % In this way, you will understand the properties, the methods and the capabilities of the 
 % Fock Basis class.
 %
-% Version V 1.0
+% This script produces two frigures. The first figure reveals the population distribution 
+% in the Fock basis for each defined state. The second figure plots the Wigner function for 
+% three different states defined at the beginning of the last section.
+%
+% The runtime of this script is ~70 seconds on a gaming laptop. 
+% The default Hilbert space used here is  N_hilbert = 30. If you want to reduce the runtime further 
+% you must define the states the way I define n_1 in the section below. However, in this way  
+% the accuracy/resolution of the Wigner fuction will be reduced. 
+% Also, you can change the variable "N_hilbert" at the beginning of the last section, 
+% named "Wigner function". I have set it to   N_hilbert = 15   but you change this value and see how
+% this affects the runtime and the resolution/accuracy of the Wigner distribution
+% 
+%
+% Version V 1.1
 
 %% Define your quantum states |n_1>, |n_2> usinge number basis
 warning('off','MATLAB:nchoosek:LargeCoefficient');     % 
@@ -18,7 +33,7 @@ close all
 clear all
 clc
 % First we define a simple coherent state of argument \alpha = 1
-c1    = 2+2i;                   % coefficient in front of the \ket
+c1  = 2+2i;                     % coefficient in front of the \ket
 N_hilbert = 20;                 % truncates the Hilbert space up to first 20 states
 n_1 = FockBasis(c1,N_hilbert);  % |n_1> = (2+2i)|0>
 n_1 = n_1.normalize;            % normalize our state
@@ -109,7 +124,7 @@ end
 x_max = 2.5;                          % needed for the square grid
 N     = 100;                          % N points across each direction
 %                                       do not increase N too much  because the code slowes down.
-N_hilbert = 20;                       % increase N_hilbert to get better approximation, however it gets slower !!
+N_hilbert = 15;                       % increase N_hilbert to get better approximation, however it gets slower !!
 % try N_hilbert = 10 15 20 25 30
 
 n_0 = FockBasis(1,N_hilbert);         % |n_0> = |0> 
@@ -133,7 +148,7 @@ face_alpha = 1;
 [X,Y] = meshgrid(linspace(-x_max,x_max,N));
 
 
-f3 = figure(3);
+f2 = figure(2);
 % --- Plot W_0 ----
 if 1 
 M_0 = max(max(abs(W_0)));
@@ -143,7 +158,7 @@ subplot(1,3,1)
 clim([-1 1]*M_0);
 axis square
 a1        =  gca;
-a2        =  axes('Parent', f3, 'Position', a1.Position);
+a2        =  axes('Parent', f2, 'Position', a1.Position);
 hs        =  surf(X, Y, W_0, 'Parent', a2, 'EdgeColor','none');
 a1.Color  =  'none';
 a2.Color  =  'none';
@@ -206,7 +221,7 @@ subplot(1,3,2)
 clim([-1 1]*M_1);
 axis square
 a1        =  gca;
-a2        =  axes('Parent', f3, 'Position', a1.Position);
+a2        =  axes('Parent', f2, 'Position', a1.Position);
 hs        =  surf(X, Y, W_1, 'Parent', a2, 'EdgeColor','none');
 a1.Color  =  'none';
 a2.Color  =  'none';
@@ -268,7 +283,7 @@ subplot(1,3,3)
 clim([-1 1]*M_2);
 axis square
 a1        =  gca;
-a2        =  axes('Parent', f3, 'Position', a1.Position);
+a2        =  axes('Parent', f2, 'Position', a1.Position);
 hs        =  surf(X, Y, W_2, 'Parent', a2, 'EdgeColor','none');
 a1.Color  =  'none';
 a2.Color  =  'none';
