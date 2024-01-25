@@ -2,9 +2,7 @@ Filippos Tzimkas-Dakis   Virginia Tech  January 2024
 
 Any feedback and suggestions are much appreciated! 
     
-    ----->  dakisfilippos@vt.edu  <-------
-         
-		 
+    ----->  dakisfilippos@vt.edu  <-------	 
 		 
 All the scripts were developed on MATLAB 2023a.
 
