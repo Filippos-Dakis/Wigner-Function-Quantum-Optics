@@ -1,4 +1,4 @@
-% Filippos Tzimkas-Dakis   Virginia Tech  January 2024  
+% Filippos Tzimkas-Dakis   Virginia Tech  January 2024
 %
 % Any feedback and suggestions are much appreciated! 
 %    
@@ -15,7 +15,7 @@
 % in the Fock basis for each defined state. The second figure plots the Wigner function for 
 % three different states defined at the beginning of the last section.
 %
-% The runtime of this script is ~70 seconds on a gaming laptop. 
+% The runtime of this script is ~6 seconds on a gaming laptop. 
 % The default Hilbert space used here is  N_hilbert = 30. If you want to reduce the runtime further 
 % you must define the states the way I define n_1 in the section below. However, in this way  
 % the accuracy/resolution of the Wigner fuction will be reduced. 
@@ -123,13 +123,14 @@ end
 % Wigner function of Simple Coherent sates
 x_max = 2.5;                          % needed for the square grid
 N     = 100;                          % N points across each direction
-%                                       do not increase N too much  because the code slowes down.
+%                                       do not increase N too much  because the code slows down.
 N_hilbert = 15;                       % increase N_hilbert to get better approximation, however it gets slower !!
 % try N_hilbert = 10 15 20 25 30
 
 n_0 = FockBasis(1,N_hilbert);         % |n_0> = |0> 
 n_1 = FockBasis([0;1],N_hilbert);     % |n_1> = |1> 
 n_2 = FockBasis([1;1],N_hilbert);     % |n_2> = |0> + |1>
+
 
 tic
 W_0 = n_0.WignerFunction(x_max,N);    % Wigner function W(\alpha, \alpha*) NxN maxtrix 
