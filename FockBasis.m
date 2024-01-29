@@ -22,6 +22,7 @@ classdef FockBasis
         Lnk     % Matrix containing the coefficients of the associated Laguerre Polynomials  L_{n}^{k} ,up to  m-th order
                 % For more info check the constructor  " function obj = Nbasis(n,N_space) "
                 % We compute and store the coefficients to make our code faster !!  .
+        sqrt_n_over_m
         Parity  % Parity matrix diag(1,-1,1,-1 ....)
     end
     properties
@@ -47,7 +48,7 @@ classdef FockBasis
             % ------------------------------------------------------------
             % Here we calculate coefficients of the associated Laguerre Polynomials,  L_{n}^{k} ,up to  m-th order.
             % for more info check   https://mathworld.wolfram.com/AssociatedLaguerrePolynomial.html
-            % We will use then in the Displacement operator. To that end, we calculate them once and then use their values through the matrix    .
+            % We will use then in the Displacement operator. To that end, we calculate them once and then use their values through the matrix   .
             % We do so, because they contain factorials, which is a time consuming calculation, and we aim to use factorials a less as possible .
             obj.Lnk = zeros(N_space,N_space,N_space);       
             for k = 0:N_space-1
@@ -57,6 +58,16 @@ classdef FockBasis
                         % L(nn+1, m+1, k+1)   = m-th coefficient of L_{n}^{k}    .
                         % SOS --- EVERY CELL CONTAINS ONLY THE m-th ORDER COEFFICIENT OF THE SERIES, the value of  (x) is NOT included .
                     end
+                end
+            end
+            % ------------------------------------------------------------
+            % The following matrix "obj.sqrt_n_over_m" is a lower-triangular matrix that contains the values of sqrt(n!/m!) needed for
+            % the Dispalcement operator written in the the Fock basis, see https://physics.stackexchange.com/questions/553225/representation-of-the-displacement-operator-in-number-basis.
+			obj.sqrt_n_over_m = tril(zeros(N_space,N_space));
+            for m = 0:(N_space-1)
+                for nn = 0:m
+                    obj.sqrt_n_over_m(m+1,nn+1) = sqrt(factorial(nn)/factorial(m));
+
                 end
             end
             % -------------------------------------------------
@@ -103,23 +114,30 @@ classdef FockBasis
 
                 for m = nn:(length(obj.Coeff)-1)
                     % This part calculates the      m >= n    elements
-                    % LaguerreLnk = L_{n}^{k}(x)  where x = |a|^2 in our case.  
+                    % LaguerreLnk = L_{n}^{k}(x)  where x = |a|^2 in our case.
                     % We compute  L_{n}^{k}(x)  using the matrix we defined in the constructor    " function obj = Nbasis(n,N_space) "  .
-                    LaguerreLnk = sum( times(obj.Lnk(nn+1,1:(nn+1),m-nn+1), abs(a).^(2*(0:nn))) );
 
-                    D(m+1,nn+1) = sqrt(factorial(nn)/factorial(m))* a^(m-nn) *exp(-1/2 *abs(a)^2) *...
-                                    LaguerreLnk;
+                    if m==nn % diagonal elements
+                        LaguerreLnk = sum( times(obj.Lnk(nn+1,1:(nn+1),m-nn+1), abs(a).^(2*(0:nn))) );
+
+                        D(m+1,nn+1) = obj.sqrt_n_over_m(m+1,nn+1) * a^(m-nn) *exp(-1/2 *abs(a)^2) *...
+                                      LaguerreLnk;
+                    else    
+                        LaguerreLnk = sum( times(obj.Lnk(nn+1,1:(nn+1),m-nn+1), abs(a).^(2*(0:nn))) );
+                        
+                        % lower triangular matrix elements
+                        D(m+1,nn+1) = obj.sqrt_n_over_m(m+1,nn+1) * a^(m-nn) *exp(-1/2 *abs(a)^2) *...
+                                      LaguerreLnk;
+                        % upper trangular matrix elements
+                        D(nn+1,m+1) = obj.sqrt_n_over_m(m+1,nn+1)* (-a')^(m-nn) *exp(-1/2 *abs(a)^2) *...
+                                      LaguerreLnk;
+
+                        % coefficient = obj.sqrt_n_over_m(m+1,nn+1) * exp(-1/2 *abs(a)^2) * LaguerreLnk;
+                        % D(m+1,nn+1) = coefficient * a^(m-nn);
+                        % D(nn+1,m+1) = coefficient * (-a')^(m-nn);
+                    end
                 end
 
-                for m = 0:(nn-1)
-                    % This part calculates the      m < n    elements
-                    % LaguerreLnk = L_{n}^{k}(x)  where x = |a|^2 in our case.  
-                    % We compute  L_{n}^{k}(x)  using the matrix we defined in the constructor    " function obj = Nbasis(n,N_space) "  .
-                    LaguerreLnk = sum( times(obj.Lnk(m+1,1:(m+1),nn-m+1), abs(a).^(2*(0:m))) );
-
-                    D(m+1,nn+1) = sqrt(factorial(m)/factorial(nn))* (-a')^(nn-m) *exp(-1/2 *abs(a)^2) *...
-                                    LaguerreLnk;
-                end
             end
             obj.Coeff = D*obj.Coeff;     % returns the displaced number state.
             obj.n     = find(obj.Coeff);
@@ -133,18 +151,24 @@ classdef FockBasis
             W     = zeros(N,N);                       % initializes the matrix
             for i = 1:N
                 for j = 1:N
-                    b      = x(j) + 1i*y(i);          % indipendent variable of Wigner function
-                    W(i,j) =  (obj.D_(-b).Coeff)' * obj.Parity * (obj.D_(-b).Coeff);     % W(b) = Trace(\rho * D(-b) * Parity * D(-b))
+                    b       = x(j) + 1i*y(i);           % indipendent variable of Wigner function
+                    D_psi   = obj.D_(-b).Coeff;         %  D(-b)|ψ> = (obj.D_(-b).Coeff)
+                    % D_psi' = (obj.D_(-b).Coeff)' ;    % <ψ|D†(-b) = (obj.D_(-b).Coeff)'
+                    
+                    %   W(b) = Trace(\rho * D(-b) * Parity * D(-b)) = <ψ|D†(-b) * Π * D(-b)|ψ>   . 
+                    W(i,j)  =  D_psi' * obj.Parity * D_psi; 
+                    %
+                    % W(i,j) =  (obj.D_(-b).Coeff)' * obj.Parity * (obj.D_(-b).Coeff);     % W(b) = Trace(\rho * D(-b) * Parity * D(-b))
                     % 
-                    %   <ψ|D†(-b) = (obj.D_(-b).Coeff)' 
-                    %    D(-b)|ψ> = (obj.D_(-b).Coeff)
+                    %  <ψ|D†(-b) = (obj.D_(-b).Coeff)' 
+                    %   D(-b)|ψ> = (obj.D_(-b).Coeff)
                 end  
             end
             W = W * 2/pi;   % Wigner Distribution (ready for plot)
 
         end
         
-        function [average_num, P] = PhotonNumber(obj)   % This function calculates the Photon Number in the state.
+        function [average_num, P] = PhotonNumber(obj)      % This function calculates the Photon Number in the state.
             obj = normalize(obj); 
             P   = times(conj(obj.Coeff),obj.Coeff)';       % Photon distribution P(n)
             average_num = P * (0:(length(obj.Coeff)-1))';  % <n> average photon number
