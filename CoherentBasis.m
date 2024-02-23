@@ -1,6 +1,6 @@
-% Filippos Tzimkas-Dakis   Virginia Tech   January 2024  
+% Filippos Tzimkas-Dakis   Virginia Tech   February 2024
 %
-% Version V 1.1
+% Version V 1.2
 % 
 % The present script defines a class whose objects behave as coherent states.
 % Every object of this class has all the basic features of a quantum coherent state .
@@ -79,6 +79,29 @@ classdef CoherentBasis
                 end
             end
             W = W * 2/pi;  % Wigner function (ready for plot)
+        end
+
+        function [Q] = Q_function(obj,x_max,N)
+            % Husimi-Q function
+            % Inputs : obj   = the object/state to calculate the Q-function .
+            %          x_max = maximum x (and y -- square grid y_max = x_max). Q-function will be computed between [(-x_max,x_max),(-y_max,y_max)] .
+            %          N     = number of points in each direction. The final matrix Q will have dimensions of NxN.
+            % Outputs  Q     = Husimi distribution, NxN matrix
+            obj   = normalize(obj);                   % normalizes |ψ>
+
+            x     = linspace(-x_max,x_max,N);         % creates the meshgrid
+            [X,Y] = meshgrid(x);                      % assings the grid to matrices
+            B     = X + 1i*Y;                         % indipendent variable  W = W(b)
+            Q     = zeros(N,N);                       % initializes the matrix
+
+            for m = 1:length(obj.Coeff)
+
+                Q = Q + obj.Coeff(m) * exp(-1/2 *( abs(B).^2 + abs(obj.Kets(m)).^2 - 2*conj(B).*(obj.Kets(m)) ) );
+            
+            end
+            
+            Q = 1/pi * abs(Q).^2;  % Q function (ready for plot)
+
         end
 
         function obj = plus(obj1,obj2)          % adds two vectors and combine the repeated states.
