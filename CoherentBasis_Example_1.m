@@ -1,4 +1,4 @@
-% Filippos Tzimkas-Dakis   Virginia Tech  January 2024  
+% Filippos Tzimkas-Dakis   Virginia Tech  February 2024
 %
 % Any feedback and suggestions are much appreciated! 
 %    
@@ -9,7 +9,7 @@
 % Example on CoherentBasis class
 % You should better execute its section one after the other while also reading the comments.
 % In this way, you will understand the properties, the methods and the capabilities of the 
-% Coherent Basis class.
+% CoherentBasis class.
 %
 % This script produces four frigures.
 % Figure 1: population distribution in Fock basis for four different states written in the coherent basis
@@ -19,7 +19,7 @@
 %
 % The runtime of this script is ~5 seconds on a gaming laptop.
 %
-% Version V 1.1
+% Version V 1.2
 
 %% Define your quantum states |psi_1>, |psi_2> using coherent states
 close all
@@ -27,8 +27,8 @@ clear all
 clc
 tic
 % First we define a simple coherent state of argument \alpha = 1
-c1 = 2+2i;                      % coefficient in front of the \ket
-s1 = 1;                         % argument inside the \ket 
+c1    = 2+2i;                   % coefficient in front of the \ket
+s1    = 1;                      % argument inside the \ket 
 psi_1 = CoherentBasis(c1,s1);   % |psi_1> = (2+2i)|1>,  here |1> = |α=1> is a coherent state, NOT a Fock state!
 psi_1 = psi_1.normalize;        % normalize our state
 psi_1.Coeff                     % display normalized coefficients
@@ -38,8 +38,8 @@ c2 = [1;  2];                   % coefficient in front of the \ket
 s2 = [-1; 3i];                  % argument inside the \ket 
 psi_2 = CoherentBasis(c2,s2);   % |psi_2> = |-1> + 2|3i>, here |-1>, |3i> are coherent states
 psi_2 = psi_2.normalize;        % normalize the state
-psi_2.Coeff                     % display normalized coefficients
-
+psi_2.Coeff                     % display coefficients upon normalization
+ 
 %% Dot product, quantum state addition, Displacement operator
 
 % Dot probucts 
@@ -48,6 +48,8 @@ b = braket(psi_1,psi_1);        %
 
 c1 = braket(psi_1,psi_2);       % c1 = <psi_1|psi_2>
 c2 = braket(psi_2,psi_1);       % c2 = <psi_2|psi_1> = conj(c1)
+
+%%
 
 % Add two quantum states or two objects
 psi_3 = psi_1 + psi_2;          % |psi_3> = |psi_1> + |psi_2>    NOT NORMALIZED
@@ -137,7 +139,7 @@ end
 
 % Wigner function of Simple Coherent sates
 x_max = 5;                             % needed for the square grid
-N     = 600;                           % N points across each direction
+N     = 300;                           % N points across each direction
 
 W_0 = psi_0.WignerFunction(x_max,N);   % Wigner function W(\alpha, \alpha*) NxN maxtrix 
 W_0 = real(W_0);                       % Taking the real part because there will always be a small remenant imaginary component
@@ -227,7 +229,7 @@ hold off
 % ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 end
 
-% --- Plot W_1 ----
+% --- Plot W_1 ----------
 if 1
 M_1 = max(max(abs(W_1)));
 
@@ -481,7 +483,7 @@ hold off
 end
 hold off
 
-% --- Plot W_odd_cat ----
+% --- Plot W_odd_cat ----------
 if 1
 M_2 = max(max(abs(W_compass)));
 
