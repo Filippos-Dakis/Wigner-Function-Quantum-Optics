@@ -509,7 +509,7 @@ a1.View   =   a2.View;
 zlim([-1 1]*M_2*1.1)
 xlabel('Re(\beta)')
 ylabel('Im(\beta)')
-zlabel('W_{odd}(\beta)')
+zlabel('W_{compass}(\beta)')
 colormap(a1,cmap_1)
 colormap(a2,cmap_2)
 clim([-1 1]*M_2);
