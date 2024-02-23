@@ -1,12 +1,12 @@
-% Filippos Tzimkas-Dakis   Virginia Tech   February 2024
+% Filippos Tzimkas-Dakis   Virginia Tech   February 2024 
 %
-% Version V 1.2
+% Version V 1.2 
 % 
 % The present script defines a class whose objects behave as coherent states.
 % Every object of this class has all the basic features of a quantum coherent state .
 % Namely, one can define a state, normalize it, compute overlaps between states, apply, 
 % add quantum states,  displacement operators, compute the Wigner function, calculate 
-% the photon distribution, average photo number.
+% the photon distribution, average photo number .
 %
 % Please have a look at the examples accompanying this script 
 %
