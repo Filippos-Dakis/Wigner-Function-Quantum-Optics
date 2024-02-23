@@ -1,10 +1,10 @@
-% Filippos Tzimkas-Dakis   Virginia Tech   January 2024
+% Filippos Tzimkas-Dakis   Virginia Tech   February 2024
 %
 % Any feedback and suggestions are much appreciated! 
 %    
 %     ----->  dakisfilippos@vt.edu  <-------
 %
-% Version V 1.1
+% Version V 1.2
 % 
 % The present script defines a class whose objects behave as Fock/Number states.
 % Every object of this class has all the basic features of a quantum Fock state .
@@ -27,6 +27,7 @@ classdef FockBasis
     end
     properties
         Coeff {mustBeNumeric}        % column vector that contains the coefficient of every Fock/Number state.
+        Kets  {mustBeNumeric}        % column vector that contains the contributing Fock states.
         n     {mustBeNonnegative}    % column vector depicting the populated number states, ie n = [1 4 5] 
                                      % means that the |1> |4> and |5> have nonzero coefficients.  .
     end 
@@ -43,6 +44,7 @@ classdef FockBasis
                 N_space = length(n) + 15;
             end
             obj.Coeff = [n(:);zeros(N_space -length(n),1)]; % assign the input values to class properties
+            obj.Kets  = find(obj.Coeff) - 1;                % because the basis starts from |0>
             obj.n     = find(obj.Coeff)-1;                  % assign the populated number states
             
             % ------------------------------------------------------------
@@ -75,9 +77,13 @@ classdef FockBasis
         % obj.Parity = diag(cos((0:(N_space-1))*pi));
         end
 
+
+
         function obj = normalize(obj)                % This function normalizes the state (the obj.Coeff vector).
             obj.Coeff = obj.Coeff/norm(obj.Coeff);
         end
+
+
 
         function q = braket(obj1,obj2)        % This function computes the dot product, namely   q = <ψ_1|ψ_2>  . 
             if nargin == 1                    % if nargin = 1 q = <ψ_1|ψ_1>  
@@ -91,6 +97,8 @@ classdef FockBasis
             q = obj1.Coeff'*obj2.Coeff;
         end
 
+
+
         function obj = plus(obj1,obj2)       % This function adds up two objects,  |ψ_3> = |ψ_1> + |ψ_2>   (it DOES NOT normalize the final vector/object) .
             l1 = length(obj1.Coeff);         % If a Number state is included in both |ψ_1>,|ψ_2> we merge its coefficients 
             l2 = length(obj2.Coeff);
@@ -103,6 +111,8 @@ classdef FockBasis
             end
             obj = FockBasis(s,max(l1,l2));    % the final object/vector has dimensions  max(l1,l2)
         end
+
+
 
         function [obj, D] = D_(obj,a)
             % Displacement operator function 
@@ -143,8 +153,14 @@ classdef FockBasis
             obj.n     = find(obj.Coeff);
 
         end
-        function [W] = WignerFunction(obj,x_max,N)    % computes the Wigner distribution
 
+
+
+        function [W] = WignerFunction(obj,x_max,N)    % computes the Wigner distribution
+            % Wigner Distribution
+            % inputs : obj   = the object/state to calculate the Wigner function .
+            %          x_max = maximum x (and y -- square grid y_max = x_max). W-function will be computed between [(-x_max,x_max),(-y_max,y_max)] .
+            %          N     = number of points in each direction. The final matrix W will have dimensions of NxN.
             obj   = normalize(obj);                   % normalizes |ψ>
             x     = linspace(-x_max,x_max,N);         % x-component of the "indipendent variable"
             y     = x;                                % y-component of the "indipendent variable"
@@ -168,11 +184,42 @@ classdef FockBasis
 
         end
         
+
+        function [Q] = Q_function(obj,x_max,N)
+            % Husimi-Q function
+            % Inputs : obj   = the object/state to calculate the Q-function .
+            %          x_max = maximum x (and y -- square grid y_max = x_max). Q-function will be computed between [(-x_max,x_max),(-y_max,y_max)] .
+            %          N     = number of points in each direction. The final matrix Q will have dimensions of NxN.
+            % Outputs: Q = Husimi distribution, NxN matrix
+
+            obj   = normalize(obj);                   % normalizes |ψ>
+            k     = 0:(length(obj.Coeff)-1);          % size of Hilbert space
+            k     = k(:);
+            x     = linspace(-x_max,x_max,N);         % creates the meshgrid
+            [X,Y] = meshgrid(x);                      % assings the grid to matrices
+            B     = X + 1i*Y;                         % indipendent variable  W = W(b)
+            Q     = zeros(N,N);                       % initializes the matrix
+            
+            for i = 1:N
+                for j = 1:N
+
+                    Q(i,j) = sum( ((B(i,j)').^(k))./sqrt(factorial(k)) .*obj.Coeff ) ;
+
+                end
+            end
+            Q = 1/pi * abs( exp(-1/2 *abs(B).^2).*Q ).^2; % Q function (ready for plot)
+            
+        end
+
+
+        
         function [average_num, P] = PhotonNumber(obj)      % This function calculates the Photon Number in the state.
             obj = normalize(obj); 
             P   = times(conj(obj.Coeff),obj.Coeff)';       % Photon distribution P(n)
             average_num = P * (0:(length(obj.Coeff)-1))';  % <n> average photon number
 
         end
+
+        
     end
 end
