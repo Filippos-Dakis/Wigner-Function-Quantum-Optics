@@ -44,7 +44,7 @@ Suggested textbooks:
 - Exploring the Quantum Atoms, Cavities and Photons.  Serge Haroche Jean-Michel Raimond
 - Introductory Quantum Optics. Christopher Gerry Peter Knight
 
-I am open to other suggestion. Please feel free to contact me ad dakisfilippos@vt.edu
+I am open to other suggestion. Please feel free to contact me at dakisfilippos@vt.edu
 
 
 If you found my code useful, please cite is as  https://github.com/Filippos-Dakis/Wigner-Function-Quantum-Optics
