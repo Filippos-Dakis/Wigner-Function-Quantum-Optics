@@ -1,12 +1,12 @@
-% Filippos Tzimkas-Dakis   Virginia Tech   February 2024 
+% Filippos Tzimkas-Dakis   Virginia Tech   MARCH 2024
 %
-% Version V 1.2 
+% Version V 1.2
 % 
 % The present script defines a class whose objects behave as coherent states.
 % Every object of this class has all the basic features of a quantum coherent state .
 % Namely, one can define a state, normalize it, compute overlaps between states, apply, 
 % add quantum states,  displacement operators, compute the Wigner function, calculate 
-% the photon distribution, average photo number .
+% the photon distribution, average photo number.
 %
 % Please have a look at the examples accompanying this script 
 %
@@ -19,6 +19,7 @@ classdef CoherentBasis
                                  % [0; 2.4; 1+1i]  ------->  |0> + |2.4> +  |1+1i>
     end
     methods
+
         function obj = CoherentBasis(c,s)
             % constructor of the CoherentBasis class
             % inputs:   c : [vector] column vector containing the coefficients of every coherent state, ie c = [1 1i] = |s(1)> + 1i|s(s)> .
@@ -33,6 +34,7 @@ classdef CoherentBasis
         function obj = normalize(obj)                % normalizes the input state
             obj.Coeff = obj.Coeff/sqrt(braket(obj));
         end
+
         function q = braket(obj,objj)   % computes <\psi_1|\psi_2>
             if (nargin==1)              % if nargin=1 computes the 1/N normalization factor
                 objj = obj;
@@ -46,6 +48,46 @@ classdef CoherentBasis
                     q = q + obj.Coeff(m)*objj.Coeff(n)* exp(-1/2 *( abs(obj.Kets(m))^2 + abs(objj.Kets(n))^2 - 2*obj.Kets(m)'*objj.Kets(n) ));
                 end
             end
+        end
+
+        function obj = A(obj)           % Annihilation operator a,   A(c|α>) = (α+c)|α>
+            new_coeffs = obj.Coeff + obj.Kets;                 % α+c
+            obj        = CoherentBasis(new_coeffs,obj.Kets);   % create a new CoherentBasis object
+        end
+
+        function obj = A_dagger(obj,m,N_hilbert)          % Creation Operator a^†
+            % The final output will be a state written in the FOCK/NUMBER  basis !!!!!
+            % This is due to the peculiarity of the creation operator (a^†)
+            % that does not have eigen-KET. 
+            %
+            % For more information please see   ---- Phys. Rev. A 43, 492 ----  especially Eq. (2.9)
+            %
+            % Inputs: 
+            %        m          = the power at which we raise a^†,  (a^†)^m
+            %        N_hilbert  = hilbert space of the output state (written in the FOCK/NUMBER basis)
+            %                     the higher the number of average photons  n a coherent state the larger the
+            %                     Hilbert space should be
+            % Outputs:
+            %        FockBasis object.  The result is also known as "Agrawal State", see Phys. Rev. A 43, 492 .
+            %           
+            if nargin == 1
+                m = 1;            % power of a^†
+                N_hilbert = 35;   % Hilbert space of the output state
+            elseif  nargin == 2
+                N_hilbert = 35;   % Hilbert space of the output state
+            end
+            zero_number_state = FockBasis(1,N_hilbert);      % |0>   in FOCK basis.
+
+            a_dagger   = diag(sqrt(1:(N_hilbert-1)),+1);     % a^†  matrix representation in FOCK basis 
+            new_coeffs = zero_number_state.Coeff;            % memory allocation
+            for ii = length(obj.Kets)
+                % a^† |a_i> = a^† D(a_i)|0>
+                % for each coherent state of the input object
+                zer0       = zero_number_state.D_(obj.Kets(ii));
+                new_coeffs = new_coeffs +  a_dagger^m * zer0.Coeff * obj.Coeff(ii);     
+            end
+            Final_state = FockBasis([0;new_coeffs(:)]); 
+            obj         = Final_state;
         end
 
         function obj = D_(obj,a)                       % displacement operator D(b)|a> = exp(i*Im(a^*·b))|a+b>
@@ -124,6 +166,10 @@ classdef CoherentBasis
                 end
             end
             obj = CoherentBasis(coeff2(:),kets2(:));   % final state/object
+        end
+
+        function obj = mtimes(scalar,obj)          % multiplies the coefficients in fornt of the kets with a scalar .
+            obj.Coeff = scalar*obj.Coeff;
         end
 
         function [average_num, Photon_Distribution] = PhotonNumber(obj) 
