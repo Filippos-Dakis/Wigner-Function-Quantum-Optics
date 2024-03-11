@@ -1,4 +1,4 @@
-% Filippos Tzimkas-Dakis   Virginia Tech  February 2024
+% Filippos Tzimkas-Dakis   Virginia Tech  MARCH 2024
 %
 % Any feedback and suggestions are much appreciated! 
 %    
@@ -12,62 +12,113 @@
 % CoherentBasis class.
 %
 % This script produces four frigures.
-% Figure 1: population distribution in Fock basis for four different states written in the coherent basis
+% Figure 1: population distri
+% bution in Fock basis for four different states written in the coherent basis
 % Figure 2: population distribution in Fock basis for an even and an odd cat state 
 % Figure 3: Wigner functions for (i) vacumm |0> , (ii) coherent |\alpha>,  (iii) superposition of two coherent states |\alpha> + |\beta> 
 % Figure 4: Wigner functions for (i) even cat state, (ii) odd cat state , (iii) compass cat state 
 %
-% The runtime of this script is ~5 seconds on a gaming laptop.
+% The runtime of this script is ~3 seconds on a gaming laptop.
 %
-% Version V 1.2
+% Version V 1.2.2
 
-%% Define your quantum states |psi_1>, |psi_2> using coherent states
+%% ----------------------- Section 1 --------------------------------------
+% Define your quantum states |psi_1>, |psi_2> using coherent states
+
 close all
 clear all
 clc
 tic
 % First we define a simple coherent state of argument \alpha = 1
+fprintf('\n\n --------------- Section 1 ----------------------\n')
+
 c1    = 2+2i;                   % coefficient in front of the \ket
 s1    = 1;                      % argument inside the \ket 
 psi_1 = CoherentBasis(c1,s1);   % |psi_1> = (2+2i)|1>,  here |1> = |α=1> is a coherent state, NOT a Fock state!
+fprintf(['\n Before normalization   |ψ_1> = (',num2str(psi_1.Coeff),')|',num2str(psi_1.Kets),'>\n'])
 psi_1 = psi_1.normalize;        % normalize our state
-psi_1.Coeff                     % display normalized coefficients
+psi_1.Coeff;                    % display normalized coefficients
+fprintf(['\n After normalization    |ψ_1> = (',num2str(psi_1.Coeff,3),')|',num2str(psi_1.Kets),'>\n\n'])
 
 % Now let's define a more general state
 c2 = [1;  2];                   % coefficient in front of the \ket
 s2 = [-1; 3i];                  % argument inside the \ket 
 psi_2 = CoherentBasis(c2,s2);   % |psi_2> = |-1> + 2|3i>, here |-1>, |3i> are coherent states
+fprintf(['\n Before normalization   |ψ_2> = ',num2str(psi_2.Coeff(1)),'|',num2str(psi_2.Kets(1)),'> + '...
+                                           '',num2str(psi_2.Coeff(2)),'|',num2str(psi_2.Kets(2)),'>\n'])
 psi_2 = psi_2.normalize;        % normalize the state
-psi_2.Coeff                     % display coefficients upon normalization
- 
-%% Dot product, quantum state addition, Displacement operator
+psi_2.Coeff;                    % display coefficients upon normalization
+fprintf(['\n Before normalization   |ψ_2> = ',num2str(psi_2.Coeff(1),3),'|',num2str(psi_2.Kets(1)),'> + '...
+                                           '',num2str(psi_2.Coeff(2),3),'|',num2str(psi_2.Kets(2)),'>\n'])
+%% ----------------------- Section 2 --------------------------------------
+% Dot product, quantum state addition, Displacement operator
 
+fprintf('\n\n --------------- Section 2 ----------------------\n')
 % Dot probucts 
 a = braket(psi_1);              % a and b are the same
 b = braket(psi_1,psi_1);        % 
+fprintf(['\n braket(psi_1)  =  braket(psi_1,psi_1) =  ',num2str(a),'\n'])
 
 c1 = braket(psi_1,psi_2);       % c1 = <psi_1|psi_2>
 c2 = braket(psi_2,psi_1);       % c2 = <psi_2|psi_1> = conj(c1)
+fprintf(['\n braket(psi_1,psi_2) = ',num2str(c1,3),'\n'])
+fprintf(['\n braket(psi_2,psi_1) = ',num2str(c2,3),'\n\n'])
 
-%%
-
+%% ----------------------- Section 3 --------------------------------------
 % Add two quantum states or two objects
+
+fprintf('\n\n --------------- Section 3 ----------------------\n')
 psi_3 = psi_1 + psi_2;          % |psi_3> = |psi_1> + |psi_2>    NOT NORMALIZED
-psi_3.Coeff                     % display coefficients
+psi_3.Coeff;                    % display coefficients
+fprintf('\n Before normalization   |ψ_3> = |ψ_1> + |ψ_2>\n')
+fprintf(['\n                              = (',num2str(psi_1.Coeff,3),')|',num2str(psi_1.Kets),'> + ',...
+                                              num2str(psi_2.Coeff(1),3),'|',num2str(psi_2.Kets(1)),'> + ',...
+                                              num2str(psi_2.Coeff(2),3),'|',num2str(psi_2.Kets(2)),'>\n'])
 psi_3 = psi_3.normalize;        % normalize the new state
-psi_3.Coeff                     % display normalized coefficients 
-d = braket(psi_3)               % d = <psi_3|psi_3>
+psi_3.Coeff;                    % display normalized coefficients 
+psi_3.Kets;                     % display kets 
+fprintf(['\n After normalization   |ψ_3>  = (',num2str(psi_3.Coeff(1),3),')|',num2str(psi_3.Kets(1)),'> + ',...
+                                         '(',num2str(psi_3.Coeff(2),3),')|',num2str(psi_3.Kets(2)),'> + ',...
+                                         '(',num2str(psi_3.Coeff(3),3),')|',num2str(psi_3.Kets(3)),'>\n'])
+d = braket(psi_3);              % d = <psi_3|psi_3>
+fprintf(['\n <ψ_3|ψ_3> = ',num2str(d,3),' = ',num2str(abs(d)),' \n'])
 
-psi_4 = psi_1 + psi_1;          % |psi_4> = 2*psi_1 = 2*psi_1.Coeff * |psi_1.Kets> 
+psi_4 = psi_1 + psi_1;          % |psi_4> = 2*psi_1 = 2*psi_1.Coeff * |psi_1.Kets>       NOT NORMALIZED
 
+% scalar multiplication         k*|ψ> = k(c_1|a_1> + c_2|a_2> + ..... c_j|a_j>)
+%           ↓
+psi_5 = psi_1 + 2*psi_3 + exp(-1i*pi/4)*psi_4;   % |psi_5> = |psi_1> + 2*|psi_3> + exp(-1i*pi/4)*|psi_4>     NOT NORMALIZED
+
+%% ----------------------- Section 4 --------------------------------------
 % Displacement operator
-psi_0 = CoherentBasis(1,0);     % |psi_0> = |0>
-psi_0.Kets                      % display the \kets of this state
-z     = 1 + 2i;                 % argument of Displacement operator
-psi_z = psi_0.D_(z);            % |psi_z> = D(z)|psi_0> = |z>                 
-psi_z.Kets                      % display the \kets of this state  
 
-%% Photon number 
+fprintf('\n\n --------------- Section 4 ----------------------\n')
+psi_0 = CoherentBasis(1,0);     % |psi_0> = |0>
+psi_0.Kets;                     % display the \kets of this state
+fprintf(['\n |ψ_0> = |',num2str(psi_0.Kets),'>\n'])
+z     = 1 + 2i;                 % argument of Displacement operator
+psi_z = psi_0.D_(z);            % |psi_z> = D(z)|psi_0> = |z>    
+fprintf([' |ψ_z> = D(z)|',num2str(psi_0.Kets),'>  =  ',num2str(psi_z.Coeff),'|',num2str(psi_z.Kets),'>\n'])
+psi_z.Kets;                     % display the \kets of this state 
+
+%% ----------------------- Section 5 --------------------------------------
+% Annihilation (a) and Creation (a^†) operators
+fprintf('\n\n --------------- Section 5 ----------------------\n')
+fprintf('\n Annihilation(a) and Creation (a^†) operators, have a look in the script.\n\n')
+
+psi_ = psi_1.A;                  % psi_1.A == a|psi_2> = (c_1 + a_1)|a_1> + (c_2 + a_2)|a_2>  
+psi_.Coeff;                      % print the coefficients
+
+psi_ = psi_1.A_dagger;           % psi_1.A_dagger == a^† |psi_2>  see ------>  Phys. Rev. A 43, 492 . 
+% ↑  
+% psi_   is a state written in the FOCK/NUMBER basis, also known as "Agrawal State" !!!!!!
+psi_.Coeff;                      % print the coefficients of Fock states
+psi_.n;                          % print kets (Fock basis) with NON-zero coefficients
+
+%% ----------------------- Section 6 -------------------------------------- 
+fprintf('\n\n --------------- Section 6 ----------------------\n')
+fprintf('\n Photon number plots\n')
+% Photon number ------
 [N_0,P_n0] = psi_0.PhotonNumber;     % N_ = average photon number
 [N_1,P_n1] = psi_1.PhotonNumber;     % P_n = photon distribution as a funtion of n
 [N_2,P_n2] = psi_2.PhotonNumber;
@@ -75,8 +126,7 @@ psi_z.Kets                      % display the \kets of this state
 
 n = 0:length(P_n0)-1;                % for plot reasons
 % ---- plots ---------------------------------
-if 1 
-figure(1)
+f1 = figure(1);
 subplot(2,2,1)
 bar(n,P_n0,'EdgeColor','none')
 text(5,0.75,sprintf('$\\langle n \\rangle $= %d',N_0), ...
@@ -105,7 +155,10 @@ text(20,0.3,sprintf('$\\langle n \\rangle $= %.2f',N_3), ...
 xlabel('n')
 ylabel('P(n)')
 title('$|\psi_3\rangle \propto |\psi_1\rangle + |\psi_2\rangle$','Interpreter','latex')
-end
+
+f1.Units = 'normalized';
+f1.OuterPosition = [0 0.52 0.3367 0.4756]; 
+sgtitle('Photon Number Distribution')
 % ---------------------------------------------
 
 
@@ -116,27 +169,31 @@ odd_cat  = CoherentBasis([1;-1],[3;-3]);  % create an odd cat
 [N_odd,P_odd]   = odd_cat.PhotonNumber;   % P_ photon number distribution 
 
 % ------ plots ---------------------------------
-if 1
-figure(2)
+f2 = figure(2);
 subplot(1,2,1)
 bar(n,P_even,'EdgeColor','none')
-text(20,0.25,sprintf('$\\langle n \\rangle $= %d',round(N_even)), ...
+text(20,0.25,sprintf('$\\langle n \\rangle $= %.2f',N_even), ...
     'Interpreter', 'latex', 'fontsize', 10);
 xlabel('n')
 ylabel('P(n)')
 title('$|\psi_{\rm even}\rangle \propto |3\rangle + |-3\rangle$','Interpreter','latex')
 subplot(1,2,2)
 bar(n,P_odd,'EdgeColor','none')
-text(20,0.25,sprintf('$\\langle n \\rangle $= %d',round(N_odd)), ...
+text(20,0.25,sprintf('$\\langle n \\rangle $= %.2f',N_odd), ...
     'Interpreter', 'latex', 'fontsize', 10);
 xlabel('n')
 ylabel('P(n)')
 title('$|\psi_{\rm odd}\rangle \propto |3\rangle - |-3\rangle$','Interpreter','latex')
-end
+
+f2.Units = 'normalized';
+f2.OuterPosition = [0.6621 0.52 0.3367 0.4756]; 
+sgtitle('Photon Number Distribution')
 % ----------------------------------------------
 
-%%  Wigner function 
-
+%% ----------------------- Section 7 --------------------------------------   
+% Wigner function 
+fprintf('\n\n --------------- Section 7 ----------------------\n')
+fprintf('\n Wigner Function plots\n\n')
 % Wigner function of Simple Coherent sates
 x_max = 5;                             % needed for the square grid
 N     = 300;                           % N points across each direction
@@ -151,23 +208,22 @@ W_2 = real(W_2);
 W_even_cat = even_cat.WignerFunction(x_max,N);  % Wigner function for even cat
 W_even_cat = real(W_even_cat);
 W_odd_cat  = odd_cat.WignerFunction(x_max,N);   % Wigner function for odd cat
-W_odd_cat = real(W_odd_cat);
+W_odd_cat  = real(W_odd_cat);
 
 compass   = CoherentBasis([1;1;1;1],[3.5;-3.5;3.5i;-3.5i]) ;
 W_compass = compass.WignerFunction(x_max,N);   % Wigner function for even cat
 W_compass = real(W_compass);
 
 % ---- plots ---------------
-cmap_1 = 'turbo';
-cmap_2 = 'turbo';
+cmap_1 = 'turbo';     % for the redblue colormap download https://www.mathworks.com/matlabcentral/fileexchange/25536-red-blue-colormap 
+cmap_2 = 'turbo';     % and use 'redblue'
 face_alpha = 1;
 
 [X,Y] = meshgrid(linspace(-x_max,x_max,N));
 
 
 f3 = figure(3);
-% --- Plot W_0 ----
-if 1 
+% --- Plot W_0 ---- 
 M_0 = max(max(abs(W_0)));
 
 subplot(1,3,1) 
@@ -225,12 +281,10 @@ for i = 1:xspacing:length(x)
 end
 
 hold off
-
+title('W_0')
 % ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-end
 
 % --- Plot W_1 ----------
-if 1
 M_1 = max(max(abs(W_1)));
 
 subplot(1,3,2) 
@@ -288,11 +342,11 @@ for i = 1:xspacing:length(x)
 end
 
 hold off
+title('W_1')
 % ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-end
+
 
 % --- Plot W_2 ----
-if 1
 M_2 = max(max(abs(W_2)));
 
 subplot(1,3,3) 
@@ -323,8 +377,8 @@ colormap(a2,cmap_2)
 clim([-1 1]*M_2);
 axis square
 %  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-x=X(1,:);
-y=Y(:,1);
+x = X(1,:);
+y = Y(:,1);
 %               Divide the lengths by the number of lines needed
 xnumlines = 14;                %               10 lines
 ynumlines = 14;                %               10 partitions
@@ -350,15 +404,16 @@ for i = 1:xspacing:length(x)
 end
 
 hold off
+title('W_2')
 % ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 
-end
+f3.Units = 'normalized';
+f3.OuterPosition = [0    0.05    0.45    0.47]; 
 
 hold off
 
 f4 = figure(4);
 % --- Plot W_even_cat ----
-if 1
 M_2 = max(max(abs(W_even_cat)));
 
 subplot(1,3,1) 
@@ -388,6 +443,7 @@ colormap(a1,cmap_1)
 colormap(a2,cmap_2)
 clim([-1 1]*M_2);
 axis square
+box off
 %  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 x=X(1,:);
 y=Y(:,1);
@@ -414,13 +470,12 @@ for i = 1:xspacing:length(x)
     Z2 = W_even_cat(:,i);
     plot3(X2,y,Z2,'Color',[0,0,0,0.3]);
 end
-
+title('Even Cat')
 hold off
 % ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-end
+
 
 % --- Plot W_odd_cat ----
-if 1
 M_2 = max(max(abs(W_odd_cat)));
 
 subplot(1,3,2) 
@@ -479,12 +534,10 @@ end
 
 hold off
 % ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-
-end
+title('Odd Cat')
 hold off
 
-% --- Plot W_odd_cat ----------
-if 1
+% --- Plot Compass ----------
 M_2 = max(max(abs(W_compass)));
 
 subplot(1,3,3) 
@@ -494,6 +547,7 @@ axis square
 a1        =  gca;
 a2        =  axes('Parent', f4, 'Position', a1.Position);
 hs        =  surf(X, Y, W_compass, 'Parent', a2, 'EdgeColor','none');
+
 a1.Color  =  'none';
 a2.Color  =  'none';
 a1.ZLim   =  [0 1];
@@ -515,8 +569,8 @@ colormap(a2,cmap_2)
 clim([-1 1]*M_2);
 axis square
 %  ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-x=X(1,:);
-y=Y(:,1);
+x = X(1,:);
+y = Y(:,1);
 %               Divide the lengths by the number of lines needed
 xnumlines = 14;                %               10 lines
 ynumlines = 14;                %               10 partitions
@@ -543,8 +597,8 @@ end
 
 hold off
 % ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-
-end
+title('Compass')
 hold off
-
+f4.Units = 'normalized';
+f4.OuterPosition = [f3.OuterPosition(3)  f3.OuterPosition(2)    1-f3.OuterPosition(3)    0.47]; 
 toc
