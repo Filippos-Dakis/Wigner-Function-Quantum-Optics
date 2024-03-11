@@ -1,10 +1,10 @@
-% Filippos Tzimkas-Dakis   Virginia Tech   February 2024
+% Filippos Tzimkas-Dakis   Virginia Tech   MARCH 2024
 %
 % Any feedback and suggestions are much appreciated! 
 %    
 %     ----->  dakisfilippos@vt.edu  <-------
 %
-% Version V 1.2
+% Version V 1.2.2
 % 
 % The present script defines a class whose objects behave as Fock/Number states.
 % Every object of this class has all the basic features of a quantum Fock state .
@@ -30,22 +30,27 @@ classdef FockBasis
         Kets  {mustBeNumeric}        % column vector that contains the contributing Fock states.
         n     {mustBeNonnegative}    % column vector depicting the populated number states, ie n = [1 4 5] 
                                      % means that the |1> |4> and |5> have nonzero coefficients.  .
+        N_Hilbert {mustBeNonnegative} % a number depicting the size of the Hilbert space
     end 
     methods
         
-        function obj = FockBasis(n,N_space) 
+        function obj = FockBasis(nn,N_space) 
             % constructor of the Number Basis class
             % inputs:   n : [vector] column vector containing the coefficients of every state number state, ie n = [0 1 1i] = |1> + 1i|2> .
             %           N_space: [number] truncates the infinite Hilbert space to N_space levels. 
             if nargin==1
                 N_space = 30;       % if N_space is not defined, is set to  N_space = 30  which is a good approximation           
-            end                    
-            if length(n)>=N_space   % N_space must always be larger than length(n)
-                N_space = length(n) + 15;
+            end  
+            if ( find(nn, 1, 'last') + 5) >=N_space   % N_space must always be larger than length(n)
+                N_space = length(nn) + 10;
+            else
+                nn = nn(1:find(nn, 1, 'last' ));
             end
-            obj.Coeff = [n(:);zeros(N_space -length(n),1)]; % assign the input values to class properties
-            obj.Kets  = find(obj.Coeff) - 1;                % because the basis starts from |0>
+      
+            obj.Coeff = [nn(:);zeros(N_space -length(nn),1)]; % assign the input values to class properties
+            obj.Kets  = (0:(N_space-1))';                % because the basis starts from |0>
             obj.n     = find(obj.Coeff)-1;                  % assign the populated number states
+            obj.N_Hilbert = N_space;                        % 
             
             % ------------------------------------------------------------
             % Here we calculate coefficients of the associated Laguerre Polynomials,  L_{n}^{k} ,up to  m-th order.
@@ -98,6 +103,17 @@ classdef FockBasis
         end
 
 
+        function obj = A(obj)           % Annhilation operator  A|n> = sqrt(n)|n-1>
+            new_coeffs = sqrt(obj.Kets(2:end)).* obj.Coeff(2:end);
+            obj        = FockBasis([new_coeffs; 0],obj.N_Hilbert);
+        end
+
+
+        function obj = A_dagger(obj)    % Creation operator  A_dagger|n> = sqrt(n+1)|n+1>
+            new_coeffs = sqrt(obj.Kets(2:end)).* obj.Coeff(1:end-1);
+            obj        = FockBasis([0;new_coeffs],obj.N_Hilbert);
+        end
+
 
         function obj = plus(obj1,obj2)       % This function adds up two objects,  |ψ_3> = |ψ_1> + |ψ_2>   (it DOES NOT normalize the final vector/object) .
             l1 = length(obj1.Coeff);         % If a Number state is included in both |ψ_1>,|ψ_2> we merge its coefficients 
@@ -112,6 +128,10 @@ classdef FockBasis
             obj = FockBasis(s,max(l1,l2));    % the final object/vector has dimensions  max(l1,l2)
         end
 
+
+        function obj = mtimes(scalar,obj)     % multiplies the coefficients in fornt of the kets with a scalar .
+            obj.Coeff = scalar*obj.Coeff;
+        end
 
 
         function [obj, D] = D_(obj,a)
@@ -151,7 +171,15 @@ classdef FockBasis
             end
             obj.Coeff = D*obj.Coeff;     % returns the displaced number state.
             obj.n     = find(obj.Coeff);
+        end
+        
 
+        function obj = S_(obj,z) 
+            % Displacement operator function
+            a     = sparse(diag(sqrt(obj.Kets(2:end)),-1));
+            a_dag = a';
+            obj.Coeff = expm(1/2 * (z'*a^2 - z*a_dag^2) ) * obj.Coeff;
+            obj = FockBasis(obj.Coeff,obj.N_Hilbert);
         end
 
 
@@ -184,6 +212,7 @@ classdef FockBasis
 
         end
         
+
 
         function [Q] = Q_function(obj,x_max,N)
             % Husimi-Q function
