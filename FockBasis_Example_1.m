@@ -1,4 +1,4 @@
-% Filippos Tzimkas-Dakis   Virginia Tech  January 2024
+% Filippos Tzimkas-Dakis   Virginia Tech  MARCH 2024
 %
 % Any feedback and suggestions are much appreciated! 
 %    
@@ -9,13 +9,15 @@
 % Example on FockBasis class
 % You should better execute its section one after the other while also reading the comments.
 % In this way, you will understand the properties, the methods and the capabilities of the 
-% Fock Basis class.
+% FockBasis class.
 %
-% This script produces two frigures. The first figure reveals the population distribution 
-% in the Fock basis for each defined state. The second figure plots the Wigner function for 
-% three different states defined at the beginning of the last section.
+% This script produces two frigures. 
+%   The first figure reveals the population distribution in the Fock basis for each defined state. 
+%   The second figure plots the Wigner function for three different states defined at the 
+%   beginning of the last section.
 %
-% The runtime of this script is ~6 seconds on a gaming laptop. 
+% The runtime of this script is ~6 seconds on a gaming laptop.
+%
 % The default Hilbert space used here is  N_hilbert = 30. If you want to reduce the runtime further 
 % you must define the states the way I define n_1 in the section below. However, in this way  
 % the accuracy/resolution of the Wigner fuction will be reduced. 
@@ -24,103 +26,173 @@
 % this affects the runtime and the resolution/accuracy of the Wigner distribution
 % 
 %
-% Version V 1.1
+% Version V 1.2.2
 
-%% Define your quantum states |n_1>, |n_2> usinge number basis
+%% ----------------------- Section 1 --------------------------------------
+% Define your quantum states |n_1>, |n_2> usinge number basis
 warning('off','MATLAB:nchoosek:LargeCoefficient');     % 
 
 close all
 clear all
 clc
-% First we define a simple coherent state of argument \alpha = 1
-c1  = 2+2i;                     % coefficient in front of the \ket
-N_hilbert = 20;                 % truncates the Hilbert space up to first 20 states
-n_1 = FockBasis(c1,N_hilbert);  % |n_1> = (2+2i)|0>
-n_1 = n_1.normalize;            % normalize our state
-n_1.Coeff                       % display normalized coefficients 
-%                                 n_1.Coeff column vector of length = 20
 
+% First, we define the ground state in the Fock/Number basis
+fprintf('\n\n --------------- Section 1 ----------------------\n')
+
+N_hilbert = 20;                 % truncates the Hilbert space up to first 20 states
+
+c1  = 2+2i;                     % coefficient in front of the \ket
+n_1 = FockBasis(c1,N_hilbert);  % |n_1> = (2+2i)|0>
+fprintf(['\n Before normalization   |n_1> = (',num2str(n_1.Coeff(1)),')|',num2str(n_1.Kets(1)),'>\n'])
+n_1 = n_1.normalize;            % normalize our state
+n_1.Coeff;                      % display normalized coefficients 
+%                                 n_1.Coeff column vector of length = 20
+fprintf(['\n After normalization    |n_1> = (',num2str(n_1.Coeff(1)),')|',num2str(n_1.Kets(1)),'>\n'])
+
+%% ----------------------- Section 2 --------------------------------------
 % Now let's define a more general state
+fprintf('\n\n --------------- Section 2 ----------------------\n')
+
 c2 = [1; 2; 0; 2i];             % coefficient in front of the \ket
 n_2 = FockBasis(c2);            % |n_2> = |0> + 2|1> + 2i|4>
 %                                 if you dont put N_hilbert as input, the
 %                                 default value is N_hilbert = 30;
+fprintf(['\n Before Normalization   |n_2> = ',num2str(n_2.Coeff(1),3),'|',num2str(n_2.n(1)),'> + ',...
+                                              num2str(n_2.Coeff(2),3),'|',num2str(n_2.n(2)),'> + ',...
+                                              '(',num2str(n_2.Coeff(4),3),')|',num2str(n_2.n(3)),'>\n'])
 n_2 = n_2.normalize;            % normalize the state
-n_2.Coeff                       % display normalized coefficients
+n_2.Coeff ;                     % display normalized coefficients
 %                                 n_2.Coeff column vector of length = 30
+fprintf(['\n After Normalization    |n_2> = ',num2str(n_2.Coeff(1),3),'|',num2str(n_2.Kets(1)),'> + ',...
+                                             num2str(n_2.Coeff(2),3),'|',num2str(n_2.Kets(2)),'> + ',...
+                                         '(',num2str(n_2.Coeff(4),3),')|',num2str(n_2.Kets(3)),'>\n'])
 
-%% Dot product, quantum state addition, Displacement operator
+%% ----------------------- Section 3 -------------------------------------- 
+% Dot product
+fprintf('\n\n --------------- Section 3 ----------------------\n')
 
 % Dot probucts 
-a = braket(n_1);               % a and b are the same
-b = braket(n_1,n_1);           % 
+a = braket(n_1);                % a and b are the same
+b = braket(n_1,n_1);            % 
+fprintf(['\n braket(n_1)  =  braket(n_1,n_1) =  ',num2str(a),'\n'])
 
-d1 = braket(n_1,n_2);          % c1 = <n_1|n_2>
-d2 = braket(n_2,n_1);          % c2 = <n_2|n_1> = conj(c1)
+d1 = braket(n_1,n_2);           % c1 = <n_1|n_2>
+d2 = braket(n_2,n_1);           % c2 = <n_2|n_1> = conj(c1)
+fprintf(['\n braket(n_1,n_2) = ',num2str(d1,3),'\n'])
+fprintf(['\n braket(n_2,n_1) = ',num2str(d2,3),'\n\n'])
 
+%% ----------------------- Section 4 -------------------------------------- 
+fprintf('\n\n --------------- Section 4 ----------------------\n')
 % Add two quantum states or two objects
-n_3 = n_1 + n_2;               % |n_3> = |n_1> + |n_2>    NOT NORMALIZED
-n_3.Coeff                      % display coefficients
-n_3 = n_3.normalize;           % normalize the new state
-n_3.Coeff;                     % display normalized coefficients 
-d = braket(n_3);               % d = <n_3|n_3>
+n_3 = n_1 + n_2;                % |n_3> = |n_1> + |n_2>    NOT NORMALIZED
+n_3.Coeff;                      % display coefficients
+fprintf('\n Before normalization   |n_3> = |n_1> + |n_2>\n')
+fprintf(['\n                              = (',num2str(n_3.Coeff(1),3),')|',num2str(n_3.Kets(1)),'> + ',...
+                                             num2str(n_3.Coeff(2),3),'|',num2str(n_3.Kets(2)),'> + ',...
+                                          '(',num2str(n_3.Coeff(4),3),')|',num2str(n_3.Kets(3)),'>\n'])
+fprintf(['\n <n_3|n_3>= ',num2str(braket(n_3),3),'\n'])
+n_3 = n_3.normalize;            % normalize the new state
+n_3.Coeff;                      % display normalized coefficients 
+fprintf(['\n After normalization   |n_3> = (',num2str(n_3.Coeff(1),3),')|',num2str(n_3.Kets(1)),'> + ',...
+                                             num2str(n_3.Coeff(2),3),'|',num2str(n_3.Kets(2)),'> + ',...
+                                          '(',num2str(n_3.Coeff(4),3),')|',num2str(n_3.Kets(3)),'>\n'])
+d = braket(n_3);                % d = <n_3|n_3>
+fprintf(['\n <n_3|n_3>= ',num2str(d,3),'\n'])
 
-n_4 = n_1 + n_1;               % |n_4> = 2*n_1 = 2*n_1.Coeff * |n_1>   NOT NORMALIZED
+n_4 = n_1 + n_1;                % |n_4> = 2*n_1 = 2*n_1.Coeff * |n_1>   NOT NORMALIZED
 
+% scalar multiplication         k*|ψ> = k(c_1|n_1> + c_2|n_2> + ..... c_j|n_j>)
+%           ↓
+n_5 = n_1 + 2*n_3 + exp(-1i*pi/4)*n_4;   % |n_5> = |n_1> + 2*|n_3> + exp(-1i*pi/4)*|n_4>     NOT NORMALIZED
+
+%% ----------------------- Section 5 --------------------------------------
+fprintf('\n\n --------------- Section 5 ----------------------\n')
 % Displacement operator
-n_0 = FockBasis(1);            % |n_0> = |0>
-n_0.Coeff;                     % display the \kets of this state
-z  = 1 + 2i;                   % argument of Displacement operator
-n_z = n_0.D_(z);               % |n_z> = D(z)|n_0> = D(z)|0> = |z>                 
-n_z.Coeff;                     % display the \kets of this state 
+n_0 = FockBasis(1);             % |n_0> = |0>
+n_0.Coeff;                      % display the \kets of this state
+z   = 1 + 2i;                   % argument of Displacement operator
+n_z = n_0.D_(z);                % |n_z> = D(z)|n_0> = D(z)|0> = |z> 
+fprintf('\n The coefficients of the displaced number state are given \n')
+n_z.Coeff                       % display the \kets of this state 
 %                                n_z.Coeff is an approximate result because
 %                                we have truncated the infinite Hilbert space to finite size.
 
-%% Photon number 
+%% ----------------------- Section 6 --------------------------------------
+% Annihilation (a) and Creation (a^†) operators
+fprintf('\n\n --------------- Section 6 ----------------------\n')
+fprintf('\n Annihilation(a) and Creation (a^†) operators, have a look in the script.\n\n')
+
+n_ = n_1.A;                     % n_1.A == a|n_1> = a c_0|0> = c_0*Sqrt(0) = 0
+n_.Coeff;                       % print the coefficients
+n_ = n_2.A;                     % n_2.A == a|n_2> = a (c_0|0> + c_1|1> + c_2|2> + c_3|3>)
+%                                                 = c_1*Sqrt(1)|0> + c_2*sqrt(2)|1> + c_3*sqrt(3)|2> .                                               
+n_.Coeff;                       % print the coefficients
+
+n_ = n_1.A_dagger;              % n_1.A_dagger == a^†|n_1> = a^† c_0|0> = c_0*Sqrt(1)|1>
+n_.Coeff;                       % print the coefficients
+n_ = n_2.A_dagger;              % n_2.A_dagger == a^†|n_2> = a^† (c_0|0> + c_1|1> + c_2|2> + c_3|3>)
+%                                                 = c_0*Sqrt(1)|1> + c_1*sqrt(2)|2> + c_2*sqrt(3)|3> + c_3*sqrt(4)|4> .                                               
+n_.Coeff;                       % print the coefficients
+
+
+%% ----------------------- Section 7 --------------------------------------
+fprintf('\n\n --------------- Section 7 ----------------------\n')
+fprintf('\n Photon number plots\n')
+% Photon number 
 [N_0,P_n0] = n_0.PhotonNumber;     % N_ = average photon number
 [N_1,P_n1] = n_1.PhotonNumber;     % P_n = photon distribution as a funtion of n
 [N_2,P_n2] = n_2.PhotonNumber;
 [N_3,P_n3] = n_3.PhotonNumber;
+[N_z,P_nz] = n_z.PhotonNumber;
 
 
 % ---- plots ---------------------------------
-if 1 
-figure(1)
-subplot(2,2,1)
+f1 = figure(1);
+subplot(3,2,1)
 bar(0:length(P_n0)-1,P_n0,'EdgeColor','none')
 text(5,0.75,sprintf('$\\langle n \\rangle $= %d',N_0), ...
     'Interpreter', 'latex', 'fontsize', 10);
 xlabel('n')
 ylabel('P(n)')
 title('$|\psi_0\rangle = |0\rangle$','Interpreter','latex')
-subplot(2,2,2)
+subplot(3,2,2)
 bar(0:length(P_n1)-1,P_n1,'EdgeColor','none')
 text(5,0.3,sprintf('$\\langle n \\rangle $= %d',N_1), ...
     'Interpreter', 'latex', 'fontsize', 10);
 xlabel('n')
 ylabel('P(n)')
 title('$|\psi_1\rangle = |0\rangle$','Interpreter','latex')
-subplot(2,2,3)
+subplot(3,2,3)
 bar(0:length(P_n2)-1,P_n2,'EdgeColor','none')
 text(20,0.08,sprintf('$\\langle n \\rangle $= %.2f',N_2), ...
     'Interpreter', 'latex', 'fontsize', 10);
 xlabel('n')
 ylabel('P(n)')
 title('$|\psi_2\rangle \propto |0\rangle + 2|1\rangle + 2i|4\rangle$','Interpreter','latex')
-subplot(2,2,4)
+subplot(3,2,4)
 bar(0:length(P_n3)-1,P_n3,'EdgeColor','none')
 text(20,0.3,sprintf('$\\langle n \\rangle $= %.2f',N_3), ...
     'Interpreter', 'latex', 'fontsize', 10);
 xlabel('n')
 ylabel('P(n)')
 title('$|\psi_3\rangle \propto |\psi_1\rangle + |\psi_2\rangle$','Interpreter','latex')
-end
+subplot(3,2,5:6)
+bar(0:length(P_nz)-1,P_nz,'EdgeColor','none')
+text(20,0.1,sprintf('$\\langle n \\rangle $= %.2f',N_z), ...
+    'Interpreter', 'latex', 'fontsize', 10);
+xlabel('n')
+ylabel('P(n)')
+title(['$|\psi_z\rangle = \hat{D}(z)|\psi_0\rangle = |',num2str(z),'\rangle$'],'Interpreter','latex')
+f1.Units = 'normalized';
+f1.OuterPosition = [0 0.4188 0.48 0.58];
 % ---------------------------------------------
+%sgtitle('Photon Number Distribution')
 
+%% ----------------------- Section 8 --------------------------------------   
+%  Wigner function 
+fprintf('\n\n --------------- Section 8 ----------------------\n')
+fprintf('\n Wigner Function plots\n\n')
 
-%%  Wigner function 
-
-% Wigner function of Simple Coherent sates
 x_max = 2.5;                          % needed for the square grid
 N     = 100;                          % N points across each direction
 %                                       do not increase N too much  because the code slows down.
@@ -142,8 +214,8 @@ W_2 = real(W_2);
 toc
 
 % ---- plots ---------------
-cmap_1 = 'turbo';
-cmap_2 = 'turbo';
+cmap_1 = 'turbo';     % for the redblue colormap download https://www.mathworks.com/matlabcentral/fileexchange/25536-red-blue-colormap 
+cmap_2 = 'turbo';     % and use 'redblue'
 face_alpha = 1;
 
 [X,Y] = meshgrid(linspace(-x_max,x_max,N));
@@ -151,7 +223,7 @@ face_alpha = 1;
 
 f2 = figure(2);
 % --- Plot W_0 ----
-if 1 
+
 M_0 = max(max(abs(W_0)));
 
 subplot(1,3,1) 
@@ -209,12 +281,12 @@ for i = 1:xspacing:length(x)
 end
 
 hold off
-
+title('W_0')
 % ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-end
 
-% --- Plot W_1 ----
-if 1
+
+
+% --- Plot W_1 -------------------------------------
 M_1 = max(max(abs(W_1)));
 
 subplot(1,3,2) 
@@ -270,13 +342,12 @@ for i = 1:xspacing:length(x)
     Z2 = W_1(:,i);
     plot3(X2,y,Z2,'Color',[0,0,0,0.3]);
 end
-
+title('W_1')
 hold off
 % ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-end
 
-% --- Plot W_2 ----
-if 1
+
+% --- Plot W_2 --------------------------------------
 M_2 = max(max(abs(W_2)));
 
 subplot(1,3,3) 
@@ -328,15 +399,17 @@ end
 % Plotting lines in the Y-Z plane
 
 for i = 1:xspacing:length(x)
-    X2 = x(i)*ones(size(y)); % a constant vector
+    X2 = x(i)*ones(size(y));   % a constant vector
     Z2 = W_2(:,i);
     plot3(X2,y,Z2,'Color',[0,0,0,0.3]);
 end
 
 hold off
+title('W_2')
 % ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
-
-end
+f2.Units = 'normalized';
+f2.OuterPosition = [0.4738 0.041 0.5262 0.53];
+%sgtitle('Wigner Functions')
 
 
 
