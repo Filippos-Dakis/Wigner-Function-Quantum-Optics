@@ -1,4 +1,4 @@
-% Filippos Tzimkas-Dakis   Virginia Tech  February 2024
+% Filippos Tzimkas-Dakis   Virginia Tech  MARCH 2024
 %
 % Any feedback and suggestions are much appreciated! 
 %    
@@ -20,14 +20,15 @@
 % The runtime of this script is ~4 seconds on a gaming laptop.
 % N  and N_hilbert affect the run time. 
 %
-% Version V 1.2
+% Version V 1.2.2
 %%
+warning('off','MATLAB:nchoosek:LargeCoefficient');     % 
 close all
 clear all
 clc
 tic
 
-x_max = 2.5;                                    % needed for the square grid
+x_max = 3.5;                                    % needed for the square grid
 N     = 100;                                    % N points across each direction  (affects the run time)
 [X,Y] = meshgrid(linspace(-x_max,x_max,N));     % grid
 dxdy  = (X(1,2) - X(1,1)) * (Y(2,1) - Y(1,1));  % surface differential
@@ -38,12 +39,18 @@ n_2        = n_2.normalize;                     % normalize the state
   
 Q_2     = n_2.Q_function(x_max,N);              % Q-function for even cat
 check_Q = sum(sum(Q_2)) * dxdy;                 % the integral of Q function must be 1
-
+fprintf(['\n ∫∫Q*dada^* = ',num2str(check_Q,3),'\n'])
 
 W_2 = n_2.WignerFunction(x_max,N);              % Wigner function for even cat
 W_2 = real(W_2);
- 
-
+check_W    = sum(sum(W_2)) * dxdy;       % the integral of W function must be 1
+fprintf(['\n ∫∫W*dada^* = ',num2str(check_W,3)])
+if ( check_W<=0.97 || check_W>= 1.05)
+    fprintf(' ≠ 1 \n\n')
+    fprintf(' Increase the Hilbert space ( N_hilbert ) \n to get a better approximation in Wigner Distribution !\n\n\n')
+else
+    fprintf('\n\n\n')
+end
 
 
 % ---- plots ---------------
