@@ -1,4 +1,4 @@
-% Filippos Tzimkas-Dakis   Virginia Tech  February 2024
+% Filippos Tzimkas-Dakis   Virginia Tech  MARCH 2024
 %
 % Any feedback and suggestions are much appreciated! 
 %    
@@ -19,7 +19,7 @@
 %
 % The runtime of this script is ~1 seconds on a gaming laptop.
 %
-% Version V 1.2
+% Version V 1.2.2
 %%
 close all
 clear all
@@ -36,11 +36,13 @@ even_cat   = CoherentBasis([1;1],[3;-3]);       % create an even cat
 
 Q_even_cat = even_cat.Q_function(x_max,N);      % Q-function for even cat
 check_Q    = sum(sum(Q_even_cat)) * dxdy;       % the integral of Q function must be 1
+fprintf(['\n ∫∫Q*dada^* = ',num2str(check_Q,3),'\n'])
 
 
 W_even_cat = even_cat.WignerFunction(x_max,N);  % Wigner function for even cat
 W_even_cat = real(W_even_cat);
- 
+check_W    = sum(sum(W_even_cat)) * dxdy;       % the integral of W function must be 1
+fprintf(['\n ∫∫W*dada^* = ',num2str(check_W,3),'\n\n'])
 
 
 
