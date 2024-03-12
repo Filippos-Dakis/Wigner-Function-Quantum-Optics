@@ -15,6 +15,7 @@ The file also includes four examples
 - FockBasis_Example_1.m
 - Q_function_CoherentBasis_Example.m
 - Q_function_FockBasis_Example.m
+- Example_Squeezed_states.m
 
 that help the user explore the features of the two main classes. 
 
