@@ -20,7 +20,7 @@ The file also includes four examples
 that help the user explore the features of the two main classes. 
 
 The key feature of these two classes (CoherentBasis, and FockBasis) is the calculation of the **Wigner Quasi-Probability distribution** and the **Q-Husimi Distributions** for any given state! However, they also include 
-other useful features such as quantum state addition, normalization, Displacement operations etc.
+other useful features such as quantum state addition, normalization, Displacement operations, annihilation and creation operators, etc.
 
 For instance, **CoherentBasis_Example_1.m** produces the following Wigner Quasi-Probability distributions
 
