@@ -11,10 +11,11 @@
 % In this way, you will understand the properties, the methods and the capabilities of the 
 % FockBasis class.
 %
-% This script produces two frigures. 
-%   The first figure reveals the population distribution in the Fock basis for each defined state. 
-%   The second figure plots the Wigner function for three different states defined at the 
-%   beginning of the last section.
+%
+% This script produces two figures. 
+%   Figure 1 : reveals the population distribution in the Fock basis for each defined state. 
+%   Figure 2 : plots the Wigner function for three different states defined at the beginning of the last section.
+%
 %
 % The runtime of this script is ~6 seconds on a gaming laptop.
 %
