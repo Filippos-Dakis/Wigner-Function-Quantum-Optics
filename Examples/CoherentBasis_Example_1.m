@@ -12,8 +12,7 @@
 % CoherentBasis class.
 %
 % This script produces four frigures.
-% Figure 1: population distri
-% bution in Fock basis for four different states written in the coherent basis
+% Figure 1: population distribution in Fock basis for four different states written in the coherent basis
 % Figure 2: population distribution in Fock basis for an even and an odd cat state 
 % Figure 3: Wigner functions for (i) vacumm |0> , (ii) coherent |\alpha>,  (iii) superposition of two coherent states |\alpha> + |\beta> 
 % Figure 4: Wigner functions for (i) even cat state, (ii) odd cat state , (iii) compass cat state 
