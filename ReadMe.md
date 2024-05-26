@@ -7,8 +7,8 @@ This file contains two main scripts:
 - CoherentBasis.m
 - FockBasis.m
 
-which define two types of classes. The first one, CoherentBasis.m , refers to Coherent states basis of Qunatum Harmonic Oscillator (QHO), while the second, FockBasis.m, refers to the number/Fock states 
-of QHO.
+which define two types of classes. The first one, CoherentBasis.m , refers to Coherent states basis of the Qunatum Harmonic Oscillator (QHO), while the second, FockBasis.m, refers to the number/Fock states 
+of the QHO.
 
 The file also includes four examples
 - CoherentBasis_Example_1.m
