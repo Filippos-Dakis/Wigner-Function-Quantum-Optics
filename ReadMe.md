@@ -1,7 +1,7 @@
 Filippos Tzimkas-Dakis   Virginia Tech  February 2024   
 
 		 
-All the scripts were developed on MATLAB 2023a.
+All the scripts were developed on MATLAB 2023a (compatible with MATLAB 2022b or later).
 
 This file contains two main scripts:
 - CoherentBasis.m
@@ -37,9 +37,9 @@ Script **Q_function_CoherentBasis_Example.m** produces the following figure
 A similar figure is produced by Q_function_FockBasis_Example.m
 
 This is the very first version and I intend to incorporate more features. Some of them are  
-- time evolution 
-- plot number states in harmonic potential
-- switch between the two bases (connect the two classes somehow)
+- density matrix representation 
+- qauntum Zeno gate for Cat-qubits
+- switch between the two bases (connect the two classes)
  
 Suggested textbooks:
 - Exploring the Quantum Atoms, Cavities and Photons.  Serge Haroche Jean-Michel Raimond
@@ -52,3 +52,5 @@ If you found my code useful, please cite is as  https://github.com/Filippos-Daki
 
 
 Any feedback and suggestions are much appreciated! 
+
+More features are on the way! Stay tuned !!
