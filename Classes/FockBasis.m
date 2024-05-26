@@ -89,6 +89,31 @@ classdef FockBasis
         end
 
 
+        function [s1,s2] = print_state(obj,s)
+            if nargin == 1
+                s = '';
+            else
+                s = ['_',num2str(s)];
+            end
+            s1 = ['|n',s,'> = '];
+            s2 = '';
+            for ii = obj.n'+1
+                coeff_str = compact_complex(obj.Coeff(ii));
+                ket_str   = num2str(obj.Kets(ii));
+    
+                if real(obj.Coeff(ii))>1e-15 && imag(obj.Coeff(ii))>1e-15
+                    s2 = [s2,'(',coeff_str,') |',ket_str,'>'];
+                else
+                    s2 = [s2, coeff_str,' |',ket_str,'>'];
+                end
+
+                if ii < max(obj.n)+1
+                    s2 = [s2,'  +  '];
+                end
+            end
+            s1 = [s1, s2];
+        end
+
 
         function q = braket(obj1,obj2)        % This function computes the dot product, namely   q = <ψ_1|ψ_2>  . 
             if nargin == 1                    % if nargin = 1 q = <ψ_1|ψ_1>  

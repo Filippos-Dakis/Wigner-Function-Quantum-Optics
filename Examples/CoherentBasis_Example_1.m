@@ -22,13 +22,21 @@
 %
 % Version V 1.2.2
 
+Functions_path = fullfile(fileparts(mfilename('fullpath')), '..','Functions');
+addpath(Functions_path);
+Classes_path = fullfile(fileparts(mfilename('fullpath')), '..','Classes');
+addpath(Classes_path);
+warning('off','MATLAB:nchoosek:LargeCoefficient'); 
+
+
+
 %% ----------------------- Section 1 --------------------------------------
 % Define your quantum states |psi_1>, |psi_2> using coherent states
-
 close all
 clear all
 clc
 tic
+
 % First we define a simple coherent state of argument \alpha = 1
 fprintf('\n\n --------------- Section 1 ----------------------\n')
 
@@ -38,7 +46,11 @@ psi_1 = CoherentBasis(c1,s1);   % |psi_1> = (2+2i)|1>,  here |1> = |α=1> is a c
 fprintf(['\n Before normalization   |ψ_1> = (',num2str(psi_1.Coeff),')|',num2str(psi_1.Kets),'>\n'])
 psi_1 = psi_1.normalize;        % normalize our state
 psi_1.Coeff;                    % display normalized coefficients
-fprintf(['\n After normalization    |ψ_1> = (',num2str(psi_1.Coeff,3),')|',num2str(psi_1.Kets),'>\n\n'])
+fprintf(['\n After normalization    |ψ_1> = (',num2str(psi_1.Coeff,3),')|',num2str(psi_1.Kets),'>\n'])
+
+% Here we use a function defined in the class to print the state 
+fprintf(['\n After normalization    ',psi_1.print_state(1),'\n\n'])
+
 
 % Now let's define a more general state
 c2 = [1;  2];                   % coefficient in front of the \ket
@@ -48,15 +60,23 @@ fprintf(['\n Before normalization   |ψ_2> = ',num2str(psi_2.Coeff(1)),'|',num2s
                                            '',num2str(psi_2.Coeff(2)),'|',num2str(psi_2.Kets(2)),'>\n'])
 psi_2 = psi_2.normalize;        % normalize the state
 psi_2.Coeff;                    % display coefficients upon normalization
-fprintf(['\n Before normalization   |ψ_2> = ',num2str(psi_2.Coeff(1),3),'|',num2str(psi_2.Kets(1)),'> + '...
+fprintf(['\n After normalization    |ψ_2> = ',num2str(psi_2.Coeff(1),3),'|',num2str(psi_2.Kets(1)),'> + '...
                                            '',num2str(psi_2.Coeff(2),3),'|',num2str(psi_2.Kets(2)),'>\n'])
+
+% Here we use a function defined in the class to print the state 
+[~,s2] = psi_2.print_state(2);
+fprintf(['\n After normalization    |ψ_2> = ',s2,'\n'])
+
+
+gg = psi_2.print_state(2);
 %% ----------------------- Section 2 --------------------------------------
 % Dot product, quantum state addition, Displacement operator
 
 fprintf('\n\n --------------- Section 2 ----------------------\n')
 % Dot probucts 
-a = braket(psi_1);              % a and b are the same
+a = braket(psi_1);              % a, b,and c are the same
 b = braket(psi_1,psi_1);        % 
+c = psi_1.braket();             %
 fprintf(['\n braket(psi_1)  =  braket(psi_1,psi_1) =  ',num2str(a),'\n'])
 
 c1 = braket(psi_1,psi_2);       % c1 = <psi_1|psi_2>
@@ -74,20 +94,28 @@ fprintf('\n Before normalization   |ψ_3> = |ψ_1> + |ψ_2>\n')
 fprintf(['\n                              = (',num2str(psi_1.Coeff,3),')|',num2str(psi_1.Kets),'> + ',...
                                               num2str(psi_2.Coeff(1),3),'|',num2str(psi_2.Kets(1)),'> + ',...
                                               num2str(psi_2.Coeff(2),3),'|',num2str(psi_2.Kets(2)),'>\n'])
+[~,s2] = psi_3.print_state();
+fprintf('\n Before normalization   |ψ_3> = |ψ_1> + |ψ_2>\n')
+fprintf(['\n                              = ',s2,'\n'])
+
 psi_3 = psi_3.normalize;        % normalize the new state
 psi_3.Coeff;                    % display normalized coefficients 
 psi_3.Kets;                     % display kets 
-fprintf(['\n After normalization   |ψ_3>  = (',num2str(psi_3.Coeff(1),3),')|',num2str(psi_3.Kets(1)),'> + ',...
-                                         '(',num2str(psi_3.Coeff(2),3),')|',num2str(psi_3.Kets(2)),'> + ',...
-                                         '(',num2str(psi_3.Coeff(3),3),')|',num2str(psi_3.Kets(3)),'>\n'])
+fprintf(['\n After normalization    ',psi_3.print_state(3),'\n\n'])
 d = braket(psi_3);              % d = <psi_3|psi_3>
 fprintf(['\n <ψ_3|ψ_3> = ',num2str(d,3),' = ',num2str(abs(d)),' \n'])
+fprintf(['\n <ψ_3|ψ_3> = ',compact_complex(d),' \n\n'])
 
+
+% Addition of the same state
 psi_4 = psi_1 + psi_1;          % |psi_4> = 2*psi_1 = 2*psi_1.Coeff * |psi_1.Kets>       NOT NORMALIZED
+fprintf(['\n Before normalization  ',psi_4.print_state(4),'\n\n']);
+
 
 % scalar multiplication         k*|ψ> = k(c_1|a_1> + c_2|a_2> + ..... c_j|a_j>)
 %           ↓
 psi_5 = psi_1 + 2*psi_3 + exp(-1i*pi/4)*psi_4;   % |psi_5> = |psi_1> + 2*|psi_3> + exp(-1i*pi/4)*|psi_4>     NOT NORMALIZED
+fprintf(['\n Before normalization  ',psi_5.print_state(5),'\n\n']);
 
 %% ----------------------- Section 4 --------------------------------------
 % Displacement operator
@@ -95,19 +123,27 @@ psi_5 = psi_1 + 2*psi_3 + exp(-1i*pi/4)*psi_4;   % |psi_5> = |psi_1> + 2*|psi_3>
 fprintf('\n\n --------------- Section 4 ----------------------\n')
 psi_0 = CoherentBasis(1,0);     % |psi_0> = |0>
 psi_0.Kets;                     % display the \kets of this state
-fprintf(['\n |ψ_0> = |',num2str(psi_0.Kets),'>\n'])
+[s1,s0] = psi_0.print_state(0);
+fprintf(['\n ',s1,'\n'])
+
+
 z     = 1 + 2i;                 % argument of Displacement operator
 psi_z = psi_0.D_(z);            % |psi_z> = D(z)|psi_0> = |z>    
-fprintf([' |ψ_z> = D(z)|',num2str(psi_0.Kets),'>  =  ',num2str(psi_z.Coeff),'|',num2str(psi_z.Kets),'>\n'])
+[s1,s2] = psi_z.print_state('z');
+fprintf([' |ψ_z> = D(z)|',num2str(psi_0.Kets),'>  = D(',num2str(z),') ',s0,'\n'])
+fprintf([' ',psi_z.print_state('z'),'\n'])
 psi_z.Kets;                     % display the \kets of this state 
 
 %% ----------------------- Section 5 --------------------------------------
 % Annihilation (a) and Creation (a^†) operators
+
 fprintf('\n\n --------------- Section 5 ----------------------\n')
 fprintf('\n Annihilation(a) and Creation (a^†) operators, have a look in the script.\n\n')
 
-psi_ = psi_1.A;                  % psi_1.A == a|psi_2> = (c_1 + a_1)|a_1> + (c_2 + a_2)|a_2>  
+fprintf(['\n      ',psi_2.print_state(1),'\n\n'])
+psi_ = psi_2.A;                  % psi_1.A == a|psi_2> = (c_1 + a_1)|a_1> + (c_2 + a_2)|a_2>  
 psi_.Coeff;                      % print the coefficients
+fprintf(['\n     a|ψ_1> = ', psi_.print_state('1`'),'\n\n'])
 
 psi_ = psi_1.A_dagger;           % psi_1.A_dagger == a^† |psi_2>  see ------>  Phys. Rev. A 43, 492 . 
 % ↑  
@@ -590,7 +626,7 @@ end
 % Plotting lines in the Y-Z plane
 
 for i = 1:xspacing:length(x)
-    X2 = x(i)*ones(size(y)); % a constant vector
+    X2 = x(i)*ones(size(y));    % a constant vector
     Z2 = W_compass(:,i);
     plot3(X2,y,Z2,'Color',[0,0,0,0.3]);
 end

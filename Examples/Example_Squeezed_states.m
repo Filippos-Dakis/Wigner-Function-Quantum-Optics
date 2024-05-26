@@ -20,6 +20,12 @@
 %
 % Version V 1.2.2
 
+Functions_path = fullfile(fileparts(mfilename('fullpath')), '..','Functions');
+addpath(Functions_path);
+Classes_path = fullfile(fileparts(mfilename('fullpath')), '..','Classes');
+addpath(Classes_path);
+warning('off','MATLAB:nchoosek:LargeCoefficient'); 
+
 %% ----------------------- Section 1 --------------------------------------
 % Define your quantum states using the Fock basis
 warning('off','MATLAB:nchoosek:LargeCoefficient');     % 

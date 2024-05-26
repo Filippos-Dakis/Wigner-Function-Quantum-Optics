@@ -12,45 +12,45 @@
 % and CoherentBasis_Examlpe_1.m . 
 %
 % The main feature of this script is to calculate and plot the Q-fuction of
-% a quantum state written in the Fock basis. For sake of comparison,
+% a quantum state written in the Coherent basis. For sake of comparison,
 % next to Q-fuction we also plot the Winger function.
 % This script produces one figure.
-% Figure 1: Wigner and Q fucntion of the quantum state |ψ>  = |0> + |1> 
+% Figure 1: Wigner and Q fucntion of the EVEN Cat state. 
 %
-% The runtime of this script is ~4 seconds on a gaming laptop.
-% N  and N_hilbert affect the run time. 
+% The runtime of this script is ~1 seconds on a gaming laptop.
 %
 % Version V 1.2.2
+
+Functions_path = fullfile(fileparts(mfilename('fullpath')), '..','Functions');
+addpath(Functions_path);
+Classes_path = fullfile(fileparts(mfilename('fullpath')), '..','Classes');
+addpath(Classes_path);
+warning('off','MATLAB:nchoosek:LargeCoefficient'); 
+
 %%
-warning('off','MATLAB:nchoosek:LargeCoefficient');     % 
 close all
 clear all
 clc
 tic
 
-x_max = 3.5;                                    % needed for the square grid
-N     = 100;                                    % N points across each direction  (affects the run time)
+x_max = 6;                                      % needed for the square grid
+N     = 400;                                    % N points across each direction
 [X,Y] = meshgrid(linspace(-x_max,x_max,N));     % grid
 dxdy  = (X(1,2) - X(1,1)) * (Y(2,1) - Y(1,1));  % surface differential
 
-N_hilbert  = 15;                                % truncates the Hilbert space up to first 15 states (affects the run time)
-n_2        = FockBasis([1;1],N_hilbert);        % |n_2> = |0> + |1>
-n_2        = n_2.normalize;                     % normalize the state
-  
-Q_2     = n_2.Q_function(x_max,N);              % Q-function for even cat
-check_Q = sum(sum(Q_2)) * dxdy;                 % the integral of Q function must be 1
-fprintf(['\n ∫∫Q*dada^* = ',num2str(check_Q,3),'\n'])
 
-W_2 = n_2.WignerFunction(x_max,N);              % Wigner function for even cat
-W_2 = real(W_2);
-check_W    = sum(sum(W_2)) * dxdy;       % the integral of W function must be 1
-fprintf(['\n ∫∫W*dada^* = ',num2str(check_W,3)])
-if ( check_W<=0.97 || check_W>= 1.05)
-    fprintf(' ≠ 1 \n\n')
-    fprintf(' Increase the Hilbert space ( N_hilbert ) \n to get a better approximation in Wigner Distribution !\n\n\n')
-else
-    fprintf('\n\n\n')
-end
+even_cat   = CoherentBasis([1;1],[3;-3]);       % create an even cat 
+
+Q_even_cat = even_cat.Q_function(x_max,N);      % Q-function for even cat
+check_Q    = sum(sum(Q_even_cat)) * dxdy;       % the integral of Q function must be 1
+fprintf(['\n ∫∫ Q dada* = ',num2str(check_Q,3),'\n'])
+
+
+W_even_cat = even_cat.WignerFunction(x_max,N);  % Wigner function for even cat
+W_even_cat = real(W_even_cat);
+check_W    = sum(sum(W_even_cat)) * dxdy;       % the integral of W function must be 1
+fprintf(['\n ∫∫ W dada* = ',num2str(check_W,3),'\n\n'])
+
 
 
 % ---- plots ---------------
@@ -59,18 +59,18 @@ cmap_2 = 'turbo';                               % plot color map
 face_alpha = 1;                                 % affects the black lines on the plot
 
 
-M_2 = max(max(abs(Q_2)));                       % maximum value of Q function, used for display purposes
+M_2 = max(max(abs(Q_even_cat)));                % maximum value of Q function, used for display purposes
 
 
 f1 = figure(1);
 
 subplot(1,2,1)                                  % plot Q Function
-[~, hc]     =   contourf(X,Y,Q_2,100,'EdgeAlpha',0,'FaceAlpha',face_alpha);
+[~, hc]     =   contourf(X,Y,Q_even_cat,100,'EdgeAlpha',0,'FaceAlpha',face_alpha);
 clim([-1 1]*M_2);
 axis square
 a1        =  gca;
 a2        =  axes('Parent', f1, 'Position', a1.Position);
-hs        =  surf(X, Y, Q_2, 'Parent', a2, 'EdgeColor','none');
+hs        =  surf(X, Y, Q_even_cat, 'Parent', a2, 'EdgeColor','none');
 a1.Color  =  'none';
 a2.Color  =  'none';
 a1.ZLim   =  [0 1];
@@ -106,7 +106,7 @@ hold on
 
 for i = 1:yspacing:length(y)
     Y1 = y(i)*ones(size(x));    % a constant vector
-    Z1 = Q_2(i,:);
+    Z1 = Q_even_cat(i,:);
     plot3(x,Y1,Z1,'Color',[0,0,0,0.3]);    % [0,0,0,Transparency]  0,0,0 = black
 end
 
@@ -114,7 +114,7 @@ end
 
 for i = 1:xspacing:length(x)
     X2 = x(i)*ones(size(y)); % a constant vector
-    Z2 = Q_2(:,i);
+    Z2 = Q_even_cat(:,i);
     plot3(X2,y,Z2,'Color',[0,0,0,0.3]);
 end
 
@@ -123,16 +123,16 @@ title('Q Function')
 % ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ 
 
 
-M_2 = max(max(abs(W_2)));                    % maximum value of Wigner function, used for display purposes
+M_2 = max(max(abs(W_even_cat)));             % maximum value of Wigner function, used for display purposes
 
 subplot(1,2,2)                               % plots Wigner Function
 
-[~, hc]     =   contourf(X,Y,W_2,100,'EdgeAlpha',0,'FaceAlpha',face_alpha);
+[~, hc]     =   contourf(X,Y,W_even_cat,100,'EdgeAlpha',0,'FaceAlpha',face_alpha);
 clim([-1 1]*M_2);
 axis square
 a1        =  gca;
 a2        =  axes('Parent', f1, 'Position', a1.Position);
-hs        =  surf(X, Y, W_2, 'Parent', a2, 'EdgeColor','none');
+hs        =  surf(X, Y, W_even_cat, 'Parent', a2, 'EdgeColor','none');
 a1.Color  =  'none';
 a2.Color  =  'none';
 a1.ZLim   =  [0 1];
@@ -168,7 +168,7 @@ hold on
 
 for i = 1:yspacing:length(y)
     Y1 = y(i)*ones(size(x));    % a constant vector
-    Z1 = W_2(i,:);
+    Z1 = W_even_cat(i,:);
     plot3(x,Y1,Z1,'Color',[0,0,0,0.3]);    % [0,0,0,Transparency]  0,0,0 = black
 end
 
@@ -176,7 +176,7 @@ end
 
 for i = 1:xspacing:length(x)
     X2 = x(i)*ones(size(y)); % a constant vector
-    Z2 = W_2(:,i);
+    Z2 = W_even_cat(:,i);
     plot3(X2,y,Z2,'Color',[0,0,0,0.3]);
 end
 
