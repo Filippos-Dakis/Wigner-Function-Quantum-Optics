@@ -143,7 +143,11 @@ fprintf('\n Annihilation(a) and Creation (a^†) operators, have a look in the s
 fprintf(['\n      ',psi_2.print_state(1),'\n\n'])
 psi_ = psi_2.A;                  % psi_1.A == a|psi_2> = (c_1 + a_1)|a_1> + (c_2 + a_2)|a_2>  
 psi_.Coeff;                      % print the coefficients
-fprintf(['\n     a|ψ_1> = ', psi_.print_state('1`'),'\n\n'])
+fprintf(['\n     a|ψ_1> = ', psi_.print_state('1`'),'\n\n\n'])
+
+psi_0  = CoherentBasis(1+1i,0);   % (1+1i) |0>  (vacuum state in Coherent basis)
+n_11 = psi_0.A_dagger; 
+fprintf(['\n      ',n_11.print_state('11'),'   This is in Fock basis !!!\n\n'])
 
 psi_ = psi_1.A_dagger;           % psi_1.A_dagger == a^† |psi_2>  see ------>  Phys. Rev. A 43, 492 . 
 % ↑  

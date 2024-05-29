@@ -221,11 +221,13 @@ classdef FockBasis
             for i = 1:N
                 for j = 1:N
                     b       = x(j) + 1i*y(i);           % indipendent variable of Wigner function
-                    D_psi   = obj.D_(-b).Coeff;         %  D(-b)|ψ> = (obj.D_(-b).Coeff)
+                    D_psi   = obj.D_(- b ).Coeff;         %  D(-b)|ψ> = (obj.D_(-b).Coeff)
+                    % [D_psi, D_psi_coj] = obj.D__(- (x(j) + 1i*y(i)) );
                     % D_psi' = (obj.D_(-b).Coeff)' ;    % <ψ|D†(-b) = (obj.D_(-b).Coeff)'
                     
                     %   W(b) = Trace(\rho * D(-b) * Parity * D(-b)) = <ψ|D†(-b) * Π * D(-b)|ψ>   . 
                     W(i,j)  =  D_psi' * obj.Parity * D_psi; 
+                    % W(i,j)  =  D_psi_coj * obj.Parity * D_psi; 
                     %
                     % W(i,j) =  (obj.D_(-b).Coeff)' * obj.Parity * (obj.D_(-b).Coeff);     % W(b) = Trace(\rho * D(-b) * Parity * D(-b))
                     % 
@@ -272,6 +274,45 @@ classdef FockBasis
             P   = times(conj(obj.Coeff),obj.Coeff)';       % Photon distribution P(n)
             average_num = P * (0:(length(obj.Coeff)-1))';  % <n> average photon number
 
+        end
+
+        function [D_psi, D_psi_conj] = D__(obj,a)
+            % Displacement operator function 
+            % We calculate D(a) in the number basis. We truncate the operator in the N_space^2 Hilbert space .
+            % For large Hilbert space D(a)|ψ> approaches the exact result but the code becomes slower - KEEP THAT IN MIND.
+            % We calculate    <m|D(a)|n> = D_{m,n}(a) using Glauber's formula, or this link  https://physics.stackexchange.com/questions/553225/representation-of-the-displacement-operator-in-number-basis.
+            D = zeros(length(obj.Coeff));      % initialize D
+            for nn = 0:(length(obj.Coeff)-1)
+
+                for m = nn:(length(obj.Coeff)-1)
+                    % This part calculates the      m >= n    elements
+                    % LaguerreLnk = L_{n}^{k}(x)  where x = |a|^2 in our case.
+                    % We compute  L_{n}^{k}(x)  using the matrix we defined in the constructor    " function obj = Nbasis(n,N_space) "  .
+
+                    if m==nn % diagonal elements
+                        LaguerreLnk = sum( times(obj.Lnk(nn+1,1:(nn+1),m-nn+1), abs(a).^(2*(0:nn))) );
+
+                        D(m+1,nn+1) = obj.sqrt_n_over_m(m+1,nn+1) * a^(m-nn) *exp(-1/2 *abs(a)^2) *...
+                                      LaguerreLnk;
+                    else    
+                        LaguerreLnk = sum( times(obj.Lnk(nn+1,1:(nn+1),m-nn+1), abs(a).^(2*(0:nn))) );
+                        
+                        % lower triangular matrix elements
+                        D(m+1,nn+1) = obj.sqrt_n_over_m(m+1,nn+1) * a^(m-nn) *exp(-1/2 *abs(a)^2) *...
+                                      LaguerreLnk;
+                        % upper trangular matrix elements
+                        D(nn+1,m+1) = obj.sqrt_n_over_m(m+1,nn+1)* (-a')^(m-nn) *exp(-1/2 *abs(a)^2) *...
+                                      LaguerreLnk;
+
+                        % coefficient = obj.sqrt_n_over_m(m+1,nn+1) * exp(-1/2 *abs(a)^2) * LaguerreLnk;
+                        % D(m+1,nn+1) = coefficient * a^(m-nn);
+                        % D(nn+1,m+1) = coefficient * (-a')^(m-nn);
+                    end
+                end
+
+            end
+            D_psi = D*obj.Coeff;     % returns the displaced number state.
+            D_psi_conj = D_psi';
         end
 
         

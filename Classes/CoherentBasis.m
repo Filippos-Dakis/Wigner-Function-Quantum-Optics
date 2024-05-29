@@ -116,15 +116,15 @@ classdef CoherentBasis
             end
             zero_number_state = FockBasis(1,N_hilbert);      % |0>   in FOCK basis.
 
-            a_dagger   = diag(sqrt(1:(N_hilbert-1)),+1);     % a^†  matrix representation in FOCK basis
-            new_coeffs = zero_number_state.Coeff;            % memory allocation
-            for ii = length(obj.Kets)
-                % a^† |a_i> = a^† D(a_i)|0>
+            a_dagger   = diag(sqrt(1:(N_hilbert-1)),-1);     % a^†  matrix representation in FOCK basis
+            new_coeffs = 0*zero_number_state.Coeff;            % memory allocation
+            for ii = 1:length(obj.Kets)
+                % a^† |a_i> = a^† D(a_i)|0>  
                 % for each coherent state of the input object
-                zer0       = zero_number_state.D_(obj.Kets(ii));
-                new_coeffs = new_coeffs +  a_dagger^m * zer0.Coeff * obj.Coeff(ii);
+                zer0       = zero_number_state.D_(obj.Kets(ii));                       % zer0.Coeff = D(a_i)|0>
+                new_coeffs = new_coeffs +  a_dagger^m * zer0.Coeff * obj.Coeff(ii);    % a^† zer0.Coeff * c(i)
             end
-            Final_state = FockBasis([0;new_coeffs(:)]);
+            Final_state = FockBasis(new_coeffs(:));
             obj         = Final_state;
         end
 

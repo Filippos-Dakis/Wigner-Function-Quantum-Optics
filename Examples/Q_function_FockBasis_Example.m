@@ -35,12 +35,12 @@ clear all
 clc
 tic
 
-x_max = 3.5;                                    % needed for the square grid
-N     = 100;                                    % N points across each direction  (affects the run time)
+x_max = 3;                                    % needed for the square grid
+N     = 61;                                    % N points across each direction  (affects the run time)
 [X,Y] = meshgrid(linspace(-x_max,x_max,N));     % grid
 dxdy  = (X(1,2) - X(1,1)) * (Y(2,1) - Y(1,1));  % surface differential
 
-N_hilbert  = 15;                                % truncates the Hilbert space up to first 15 states (affects the run time)
+N_hilbert  = 35;                                % truncates the Hilbert space up to first 15 states (affects the run time)
 n_2        = FockBasis([1;1],N_hilbert);        % |n_2> = |0> + |1>
 n_2        = n_2.normalize;                     % normalize the state
   
@@ -50,6 +50,7 @@ fprintf(['\n ∫∫ Q dada* = ',num2str(check_Q,3),'\n'])
 
 W_2 = n_2.WignerFunction(x_max,N);              % Wigner function for even cat
 W_2 = real(W_2);
+
 check_W    = sum(sum(W_2)) * dxdy;              % the integral of W function must be 1
 fprintf(['\n ∫∫ W dada* = ',num2str(check_W,3)])
 if ( check_W<=0.97 || check_W>= 1.05)
@@ -60,7 +61,7 @@ else
 end
 
 
-% ---- plots ---------------
+%% ---- plots ---------------
 cmap_1 = 'turbo';                               % plot color map
 cmap_2 = 'turbo';                               % plot color map
 face_alpha = 1;                                 % affects the black lines on the plot
@@ -78,6 +79,8 @@ axis square
 a1        =  gca;
 a2        =  axes('Parent', f1, 'Position', a1.Position);
 hs        =  surf(X, Y, Q_2, 'Parent', a2, 'EdgeColor','none');
+xlim([-x_max, x_max])
+ylim([-x_max, x_max])
 a1.Color  =  'none';
 a2.Color  =  'none';
 a1.ZLim   =  [0 1];
@@ -140,6 +143,8 @@ axis square
 a1        =  gca;
 a2        =  axes('Parent', f1, 'Position', a1.Position);
 hs        =  surf(X, Y, W_2, 'Parent', a2, 'EdgeColor','none');
+xlim([-x_max, x_max])
+ylim([-x_max, x_max])
 a1.Color  =  'none';
 a2.Color  =  'none';
 a1.ZLim   =  [0 1];
