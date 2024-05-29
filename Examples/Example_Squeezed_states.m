@@ -37,9 +37,9 @@ tic
 % First, we define the ground state in the Fock/Number basis
 fprintf('\n\n --------------- Section 1 ----------------------\n')
 
-N_hilbert = 25;                 % truncates the Hilbert space up to first 25 states
+N_hilbert = 30;                 % truncates the Hilbert space up to first 25 states
 
-c0  = 2+2i;                     % coefficient in front of the \ket
+c0  = 1;                     % coefficient in front of the \ket
 n_0 = FockBasis(c0,N_hilbert);  % |n_1> = (2+2i)|0>
 fprintf(['\n Before normalization   |n_1> = (',num2str(n_0.Coeff(1)),')|',num2str(n_0.Kets(1)),'>\n'])
 n_0 = n_0.normalize;            % normalize our state
@@ -82,7 +82,7 @@ f1.OuterPosition = [0.1273    0.6131    0.3086    0.2850];
 
 
 
-x_max = 5;                                    % needed for the square grid
+x_max = 6;                                    % needed for the square grid
 N     = 151;                                    % N points across each direction  (affects the run time)
 [X,Y] = meshgrid(linspace(-x_max,x_max,N));     % grid
 dxdy  = (X(1,2) - X(1,1)) * (Y(2,1) - Y(1,1));  % surface differential
