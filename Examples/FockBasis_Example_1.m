@@ -1,4 +1,4 @@
-% Filippos Tzimkas-Dakis   Virginia Tech  MARCH 2024
+% Filippos Tzimkas-Dakis   Virginia Tech  MAY 2024
 %
 % Any feedback and suggestions are much appreciated! 
 %    
@@ -6,20 +6,27 @@
 % 
 % This script was developed on MATLAB 2023a
 %
-% Example on Q-Husimi Function
+% Example on FockBasis class
+% You should better execute its section one after the other while also reading the comments.
+% In this way, you will understand the properties, the methods and the capabilities of the 
+% FockBasis class.
 %
-% You should better execute this script upon running FockBasis_Example_1.m 
-% and CoherentBasis_Examlpe_1.m . 
 %
-% The main feature of this script is to calculate and plot the Q-fuction of
-% a quantum state written in the Coherent basis. For sake of comparison,
-% next to Q-fuction we also plot the Winger function.
-% This script produces one figure.
-% Figure 1: Wigner and Q fucntion of the EVEN Cat state. 
+% This script produces two figures. 
+%   Figure 1 : reveals the population distribution in the Fock basis for each defined state. 
+%   Figure 2 : plots the Wigner function for three different states defined at the beginning of the last section.
 %
-% The runtime of this script is ~1 seconds on a gaming laptop.
 %
-% Version V 1.2.2
+% The runtime of this script is ~6 seconds on a gaming laptop.
+%
+% The default Hilbert space used here is  N_hilbert = 30. If you want to reduce the runtime further 
+% you must define the states the way I define n_1 in the section below. However, in this way  
+% the accuracy/resolution of the Wigner fuction will be reduced. 
+% Also, you can change the variable "N_hilbert" at the beginning of the last section, 
+% named "Wigner function". I have set it to   N_hilbert = 15   but you change this value and see how
+% this affects the runtime and the resolution/accuracy of the Wigner distribution
+% 
+% Version V 1.2.3
 
 Functions_path = fullfile(fileparts(mfilename('fullpath')), '..','Functions');
 addpath(Functions_path);
