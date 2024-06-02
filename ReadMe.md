@@ -1,5 +1,4 @@
-Filippos Tzimkas-Dakis   Virginia Tech  May 2024   
-
+# Wigner Function for Quantum Optics
 		 
 All the scripts were developed on MATLAB 2023a (compatible with MATLAB 2022b or later).
 
