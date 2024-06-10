@@ -236,7 +236,7 @@ fprintf('\n Wigner Function plots\n\n')
 x_max = 2.5;                          % needed for the square grid
 N     = 100;                          % N points across each direction
 %                                       do not increase N too much  because the code slows down.
-N_hilbert = 35;                       % increase N_hilbert to get better approximation, however it gets slower !!
+N_hilbert = 10;                       % increase N_hilbert to get better approximation, however it gets slower !!
 % try N_hilbert = 10 15 20 25 30
 
 n_0 = FockBasis(1,N_hilbert);         % |n_0> = |0> 
