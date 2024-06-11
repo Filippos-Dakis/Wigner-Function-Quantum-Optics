@@ -204,10 +204,10 @@ classdef FockBasis
             a     = sparse(diag(sqrt(obj.Kets(2:end)),+1));
             a_dag = a';
             obj.Coeff = expm(1/2 * (z'*a^2 - z*a_dag^2) ) * obj.Coeff;
-            size(obj.Coeff)
-            size(expm(1/2 * (z'*a^2 - z*a_dag^2) ) )
-            q = expm(1/2 * (z'*a^2 - z*a_dag^2) );
-            q(3,:)
+            % size(obj.Coeff)
+            % size(expm(1/2 * (z'*a^2 - z*a_dag^2) ) )
+            % q = expm(1/2 * (z'*a^2 - z*a_dag^2) );
+            % q(3,:)
             obj = FockBasis(obj.Coeff,obj.N_Hilbert);
         end
 
